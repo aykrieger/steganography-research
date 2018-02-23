@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.stego</groupId>
+    <groupId>stego</groupId>
     <artifactId>Stego</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
@@ -34,7 +34,7 @@
                             <transformers>
                                 <!-- add Main-Class to manifest file -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.stego.App</mainClass>
+                                    <mainClass>spatial.LSB.Main</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

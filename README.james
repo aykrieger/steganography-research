@@ -1,4 +1,23 @@
 Weekly Summary
 James Vaughn
 
-Week 1: 2018-02-17
+Week 1: 2018-02-23
+Changes to the Gantt schedule:
+I need more time to properly research frequency base stego techniques, so this week I implemented LSB instead as it is easy and gives me time to research more.
+
+Files changed:
+-src/main/spatial/LSB/Main
+I added the main application logic for testing out the encoder. It has hardcoded locations for resources to use for encoding.
+It needs to be generalized, but it works for demoing LSB encoding.
+
+-src/main/spatial/LSB/LeastSignificantBitEncoder
+I implemented LSB encoding and decoding completely.
+The code should be cleaned up, and the bit iterator can be pulled into a different file.
+
+Work done:
+I have completely implemented a demoable version of LSB steganography.
+It handles decoding and encoding independently, so we can use it to automatically encode and decode messages during our measurements.
+The main application can be made more general, however this is a proof-of-concept.
+
+Non-code work done:
+I have been researching the different frequency domain techniques (DCT and DWT) so I have a better idea of what is needed and what issues we may encounter.
