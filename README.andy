@@ -1,4 +1,11 @@
 Weekly Summary
 Andy Krieger
 
-Week 1: 2018-02-17
+## Week 1: 2018-02-17 to 2018-02-23
+
+We deviated from our Gannt Chart a bit, James worked on LSB so I researched and began implementing Green Blue encoding this week.
+
+I created an rough outline for the Green Blue encoding code in `src/main/java/spatial/GreenBlueEncoder.java` and based it on the methodology in the paper.
+
+I researched Green Blue steganography and read through [this paper](http://ieeexplore.ieee.org/abstract/document/7853987/).
+
