@@ -16,8 +16,13 @@ I refactored the logic to be cleaner and pulled out the bit iterator and bit bui
 -src/main/java/lib/*
 I added the bit iterator and bit builder utility classes to the project as a whole since they are useful for all techniques
 
+-src/main/java/warden/BitDeletion/*
+I created the bit deletion warden. I finished its implementation and the main application logic, so it is done.
+
 Work done:
 I added command line parsing to LSB. I also made the bit iterator and bit builder logic cleaner and available for use in the rest of the project.
+Lastly, I completed the bit deletion warden and confirmed it is working as expected. It has consistent usage logic with the LSB encoder.
+LSB and bit deletion are completely demoable and usable for collecting measurements.
 
 Non-code work done:
 I finished looking into the various techniques at a high level.
@@ -44,3 +49,5 @@ The main application can be made more general, however this is a proof-of-concep
 
 Non-code work done:
 I have been researching the different frequency domain techniques (DCT and DWT) so I have a better idea of what is needed and what issues we may encounter.
+
+------------------------------------------------------------------------------------
