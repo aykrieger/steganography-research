@@ -1,6 +1,20 @@
 Weekly Summary
 James Vaughn
 
+------------------------------------------------------------------------------------
+Week 2: 2018-03-02
+Changes to the Gantt schedule:
+
+Files changed:
+-src/main/spatial/LSB/Main
+I added the command line parsing to the encoder logic so the application can be controlled more easily for doing measurements
+
+Work done:
+I added command line parsing to LSB
+
+Non-code work done:
+
+------------------------------------------------------------------------------------
 Week 1: 2018-02-23
 Changes to the Gantt schedule:
 I need more time to properly research frequency base stego techniques, so this week I implemented LSB instead as it is easy and gives me time to research more.
