@@ -4,15 +4,24 @@ James Vaughn
 ------------------------------------------------------------------------------------
 Week 2: 2018-03-02
 Changes to the Gantt schedule:
+I am continuing to work on some of the easier techniques to give me more time to research DWT as it is pretty involved.
 
 Files changed:
--src/main/spatial/LSB/Main
+-src/main/java/spatial/LSB/Main
 I added the command line parsing to the encoder logic so the application can be controlled more easily for doing measurements
 
+-src/main/java/spatial/LSB/LeastSignificantBitEncoder
+I refactored the logic to be cleaner and pulled out the bit iterator and bit builder logic into another file
+
+-src/main/java/lib/*
+I added the bit iterator and bit builder utility classes to the project as a whole since they are useful for all techniques
+
 Work done:
-I added command line parsing to LSB
+I added command line parsing to LSB. I also made the bit iterator and bit builder logic cleaner and available for use in the rest of the project.
 
 Non-code work done:
+I finished looking into the various techniques at a high level.
+I am focusing my research more on DWT at the moment and am looking more into how it can be implemented.
 
 ------------------------------------------------------------------------------------
 Week 1: 2018-02-23
