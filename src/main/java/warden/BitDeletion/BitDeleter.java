@@ -29,6 +29,7 @@ public class BitDeleter {
         return true;
     }
 
+    // TODO add in ability to select how many LSB planes to delete
     public void ScrubImage() throws IOException {
         BufferedImage image = ImageIO.read(new File(this.imageFileName));
 
