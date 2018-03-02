@@ -5,8 +5,8 @@ import java.util.Optional;
 
 /*
  This encoding scheme embeds the message within the 2nd to 8th bit in the blue or green
- channel (or both) of a pixel. The position is chosen with a hash function. This makes the
- bit selection behave randomly and allows the decoder to select the same randomly selected bits.
+ channel (or both) of a pixel. The embedded bit position is chosen with a hash function. This makes
+ the bit selection behave randomly and allows the decoder to select the same randomly selected bits.
  */
 public class GreenBlueEncoder {
 
