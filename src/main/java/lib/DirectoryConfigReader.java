@@ -12,6 +12,8 @@ public class DirectoryConfigReader {
 
     final String directoryConfigFilename = "config/directory_config.txt";
 
+    // Stores the user defined paths for the input and output image directories
+    // so they can be used for testing
     public DirectoryConfigReader() {
         try (Stream<String> stream = Files.lines(Paths.get(directoryConfigFilename))) {
 

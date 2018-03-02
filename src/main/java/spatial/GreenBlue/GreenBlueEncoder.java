@@ -1,7 +1,13 @@
 package spatial.GreenBlue;
 
+import lib.BitIterator;
+
 import java.awt.image.BufferedImage;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
+import static java.nio.charset.StandardCharsets.*;
 
 /*
  This encoding scheme embeds the message within the 2nd to 8th bit in the blue or green
@@ -25,6 +31,13 @@ public class GreenBlueEncoder {
         Scramble original message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
          */
+        BitIterator bitMessage;
+        try {
+            bitMessage = new BitIterator(message);
+        } catch (UnsupportedEncodingException e){
+            throw new RuntimeException("Could not encode message: " + e.getMessage());
+        }
+        GreenBlueEncoder.scrambleMessage(bitMessage);
 
         /*
         Step 3
@@ -84,8 +97,39 @@ public class GreenBlueEncoder {
          */
     }
 
-    private void scrambleMessage() {
-        
+    private static void scrambleMessage(BitIterator bitMessage) {
+        ArrayList<Byte> bitMessageScrambled = new ArrayList<>();
+
+        while (bitMessage.hasNext()) {
+
+            ArrayList<Byte> bitList = new ArrayList<>();
+            for (int bitCount = 0; bitCount < 8; bitCount++) {
+                if (bitMessage.hasNext()) {
+                    // BitIterator's next method returns bits as bytes, so currentBit is a byte
+                    // with the value of either 0 or 1
+                    bitList.add(bitMessage.next());
+                } else {
+                    break;
+                }
+            }
+            // Swaps bits in positions 1 and 8, 2 and 7, 3 and 6, and 4 and 5
+            // If do not have a set of 8 bits to swap, do not swap
+            if (bitList.size() == 8) {
+                Collections.swap(bitList, 0, 7);
+                Collections.swap(bitList, 1, 6);
+                Collections.swap(bitList, 2, 5);
+                Collections.swap(bitList, 3, 4);
+            }
+
+            for (int bitShift = 0; bitShift < bitList.size(); bitShift++) {
+                
+            }
+
+
+            //
+
+
+        }
     }
 
 
