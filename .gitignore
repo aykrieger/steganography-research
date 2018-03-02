@@ -6,4 +6,5 @@
 out/
 build/
 target/
+config/
 *.jar

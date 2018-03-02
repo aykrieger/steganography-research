@@ -13,7 +13,7 @@ public class GreenBlueEncoder {
     private String imageFileName;
     private Optional<BufferedImage> stegoImage = Optional.empty();
 
-    public void encode(String message) {
+    public static void encode(String inputImg, String outputImg, String message) {
         /*
         Step 1
         Select Secret Key Sk
@@ -82,6 +82,10 @@ public class GreenBlueEncoder {
         Step 11
         Repeat steps 8 to 10 until the bit stream is finished
          */
+    }
+
+    private void scrambleMessage() {
+        
     }
 
 

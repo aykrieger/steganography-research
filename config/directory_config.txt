@@ -1,0 +1,2 @@
+InputImages_Directory=/home/carter/repositories/steganography-research/InputImages/
+OutputImage_Directory=/home/carter/repositories/steganography-research/OutputImages/
