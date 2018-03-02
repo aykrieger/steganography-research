@@ -1,10 +1,12 @@
 package spatial.GreenBlue;
 
+import lib.BitBuilder;
 import lib.BitIterator;
 
 import java.awt.image.BufferedImage;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import static java.nio.charset.StandardCharsets.*;
@@ -19,7 +21,7 @@ public class GreenBlueEncoder {
     private String imageFileName;
     private Optional<BufferedImage> stegoImage = Optional.empty();
 
-    public static void encode(String inputImg, String outputImg, String message) {
+    public static void encode(String inputImg, String outputImg, String origMessage) {
         /*
         Step 1
         Select Secret Key Sk
@@ -31,13 +33,10 @@ public class GreenBlueEncoder {
         Scramble original message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
          */
-        BitIterator bitMessage;
-        try {
-            bitMessage = new BitIterator(message);
-        } catch (UnsupportedEncodingException e){
-            throw new RuntimeException("Could not encode message: " + e.getMessage());
-        }
-        GreenBlueEncoder.scrambleMessage(bitMessage);
+
+        int[] bitMes = GreenBlueEncoder.scrambleMessage(origMessage);
+        String decodedMessage = GreenBlueEncoder.unscrambleMessage(bitMes);
+        int cat = 5;
 
         /*
         Step 3
@@ -97,8 +96,16 @@ public class GreenBlueEncoder {
          */
     }
 
-    private static void scrambleMessage(BitIterator bitMessage) {
-        ArrayList<Byte> bitMessageScrambled = new ArrayList<>();
+    private static int[] scrambleMessage(String message) {
+        BitIterator bitMessage;
+        try {
+            bitMessage = new BitIterator(message);
+        } catch (UnsupportedEncodingException e){
+            throw new RuntimeException("Could not encode message: " + e.getMessage());
+        }
+
+        // Each element represents one byte of the scrambled message
+        ArrayList<Integer> scrambledMesBytes = new ArrayList<>();
 
         while (bitMessage.hasNext()) {
 
@@ -113,7 +120,7 @@ public class GreenBlueEncoder {
                 }
             }
             // Swaps bits in positions 1 and 8, 2 and 7, 3 and 6, and 4 and 5
-            // If do not have a set of 8 bits to swap, do not swap
+            // If we do not have a set of 8 bits, do not swap
             if (bitList.size() == 8) {
                 Collections.swap(bitList, 0, 7);
                 Collections.swap(bitList, 1, 6);
@@ -121,15 +128,45 @@ public class GreenBlueEncoder {
                 Collections.swap(bitList, 3, 4);
             }
 
-            for (int bitShift = 0; bitShift < bitList.size(); bitShift++) {
-                
+            int newByte = 0x00;
+            // Converts the bitList to a single byte
+            // Ex: bitList = 0, 1, 1, 0, 0, 1, 0
+            //     newByte = 0  1  1  0  0  1  0
+            for (int i = 0; i < bitList.size(); i++) {
+                int currentByte = bitList.get(i);
+                newByte = newByte | (currentByte << i);
             }
-
-
-            //
-
-
+            scrambledMesBytes.add(newByte);
         }
+        int[] scrambledMesBits = scrambledMesBytes.stream()
+                                                  .mapToInt(Integer::intValue)
+                                                  .toArray();
+        return scrambledMesBits;
+    }
+
+    private static String unscrambleMessage(int[] bitMes) {
+        BitBuilder bitBuild = new BitBuilder();
+        int i = 0;
+        int mesLength = bitMes.length;
+        while (i < mesLength) {
+            GreenBlueEncoder.swapArrEl(bitMes, i + 0, i + 7);
+            GreenBlueEncoder.swapArrEl(bitMes, i + 1, i + 6);
+            GreenBlueEncoder.swapArrEl(bitMes, i + 2, i + 5);
+            GreenBlueEncoder.swapArrEl(bitMes, i + 3, i + 4);
+
+            int[] newBitArr = Arrays.copyOfRange(bitMes, i, i + 8);
+            int newByte = Integer.parseInt(newBitArr.toString(), 2);
+            bitBuild.append((byte)newByte);
+            i = i + 8;
+        }
+        return "Nope";
+    }
+
+    private static int[] swapArrEl (int[] arr, int x, int y) {
+        int tempX = arr[x];
+        arr[x] = arr[y];
+        arr[y] = arr[tempX];
+        return arr;
     }
 
 
