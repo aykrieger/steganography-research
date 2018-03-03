@@ -1,4 +1,4 @@
-package warden.BitDeletion;
+package warden;
 
 import org.apache.commons.cli.*;
 

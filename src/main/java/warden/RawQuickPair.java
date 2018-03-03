@@ -1,4 +1,4 @@
-package warden.BitDeletion;
+package warden;
 
 import lib.BitBuilder;
 
@@ -12,11 +12,17 @@ import java.util.Optional;
 public class RawQuickPair {
 
     private String imageFileName;
-    private Optional<BufferedImage> stegoImage = Optional.empty();
     private byte[] pixelArray = new byte[2^21]; // it is of size 2^21 since that is all of the possible combinations of the first seven bytes of RGB
+    private double ratio;
 
     public RawQuickPair(String imageFileName) {
         this.imageFileName = imageFileName;
+        this.ratio = .3;
+    }
+
+    public RawQuickPair(String imageFileName, double ratio) {
+        this.imageFileName = imageFileName;
+        this.ratio = ratio;
     }
 
     private void pixelArraySort ()throws IOException {
@@ -42,7 +48,7 @@ public class RawQuickPair {
         }
     }
 
-    private float findRatio(){
+    private double findRatio(){
         int uniqueColors = 0;
         int closeColors =0;
         for (byte leastSignificantBits : pixelArray) {
@@ -54,13 +60,13 @@ public class RawQuickPair {
                 closeColors += numberOfOnes;
             }
         }
-        float ratio = closeColors / uniqueColors;
+        double ratio = closeColors / uniqueColors;
         return ratio;
     }
 
     public boolean isImageStegonagraphic () throws IOException{
         this.pixelArraySort();
-        return findRatio() > .3;
+        return findRatio() > ratio;
     }
 
 }
