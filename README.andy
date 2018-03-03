@@ -1,6 +1,10 @@
 Weekly Summary
 Andy Krieger
 
+## Week 2: 2018-02-24 to 2018-03-02
+
+I worked on implementing the Green Blue encoding and decoding algorithm this week. I also set up some simple testing configuration files so we can use unit testing in the future. The work for the Green Blue encoding and decoding is in the file `src/main/java/spatial/GreenBlue/GreenBlueEncoder.java`, and the work on unit testing is in `src/test/java/spatial.LSB/GreenBlueEncoderTest.java`.
+
 ## Week 1: 2018-02-17 to 2018-02-23
 
 We deviated from our Gannt Chart a bit, James worked on LSB so I researched and began implementing Green Blue encoding this week.
