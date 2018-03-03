@@ -29,7 +29,8 @@ public class BitDeleter {
         return true;
     }
 
-    // TODO add in ability to select how many LSB planes to delete
+    // Scrub image should always wipe out the last 4 significant bits to be true to the warden
+    // and to prevent any information from slipping through as described by the paper, though the final image is damaged
     public void ScrubImage() throws IOException {
         BufferedImage image = ImageIO.read(new File(this.imageFileName));
 
