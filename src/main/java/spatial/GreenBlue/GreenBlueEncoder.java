@@ -6,10 +6,8 @@ import lib.BitIterator;
 import java.awt.image.BufferedImage;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
-import static java.nio.charset.StandardCharsets.*;
 
 /*
  This encoding scheme embeds the message within the 2nd to 8th bit in the blue or green
@@ -97,6 +95,7 @@ public class GreenBlueEncoder {
     }
 
     private static int[] scrambleMessage(String message) {
+        message += BitIterator.END_DELIMITER;
         BitIterator bitMessage;
         try {
             bitMessage = new BitIterator(message);
@@ -110,7 +109,7 @@ public class GreenBlueEncoder {
         while (bitMessage.hasNext()) {
 
             ArrayList<Byte> bitList = new ArrayList<>();
-            for (int bitCount = 0; bitCount < 8; bitCount++) {
+            for (int bitCount = 0; bitCount < BitIterator.BITS_IN_A_BYTE; bitCount++) {
                 if (bitMessage.hasNext()) {
                     // BitIterator's next method returns bits as bytes, so currentBit is a byte
                     // with the value of either 0 or 1
@@ -146,27 +145,52 @@ public class GreenBlueEncoder {
 
     private static String unscrambleMessage(int[] bitMes) {
         BitBuilder bitBuild = new BitBuilder();
-        int i = 0;
         int mesLength = bitMes.length;
-        while (i < mesLength) {
-            GreenBlueEncoder.swapArrEl(bitMes, i + 0, i + 7);
-            GreenBlueEncoder.swapArrEl(bitMes, i + 1, i + 6);
-            GreenBlueEncoder.swapArrEl(bitMes, i + 2, i + 5);
-            GreenBlueEncoder.swapArrEl(bitMes, i + 3, i + 4);
 
-            int[] newBitArr = Arrays.copyOfRange(bitMes, i, i + 8);
-            int newByte = Integer.parseInt(newBitArr.toString(), 2);
-            bitBuild.append((byte)newByte);
-            i = i + 8;
+        for (int i = 0; i < mesLength; i++) {
+            int currentByte = bitMes[i];
+            currentByte = GreenBlueEncoder.swapBits(currentByte, 0, 7);
+            currentByte = GreenBlueEncoder.swapBits(currentByte, 1, 6);
+            currentByte = GreenBlueEncoder.swapBits(currentByte, 2, 5);
+            currentByte = GreenBlueEncoder.swapBits(currentByte, 3, 4);
+
+            String byteString = Integer.toBinaryString(currentByte);
+            if (byteString.length() < 8) {
+                StringBuilder builder = new StringBuilder();
+                int zerosToAdd = 8 - byteString.length();
+                while (zerosToAdd > 0) {
+                    builder.append("0");
+                    zerosToAdd--;
+                }
+                byteString = builder.toString() + byteString;
+            }
+            // Splits byteString into individual string characters
+            String[] stringArr = byteString.split("(?!^)");
+
+            for (int k = 0; k < BitIterator.BITS_IN_A_BYTE; k++) {
+                int currentBit = Integer.parseInt(stringArr[k]);
+                if (bitBuild.append((byte)currentBit)) {
+                    return bitBuild.toString();
+                }
+            }
         }
-        return "Nope";
+        return bitBuild.toString();
     }
 
-    private static int[] swapArrEl (int[] arr, int x, int y) {
-        int tempX = arr[x];
-        arr[x] = arr[y];
-        arr[y] = arr[tempX];
-        return arr;
+    private static int swapBits(int num, int pos1, int pos2) {
+        // Bit at position 1
+        int bit1 = (num >> pos1) & 1;
+        // Bit at position 2
+        int bit2 = (num >> pos2) & 1;
+        // If the bits are the same, no need to swap
+        if (bit1 == bit2) {
+            return num;
+        }
+        // Create a mask from the two bit positions
+        int mask = (1 << pos1) | (1 << pos2);
+        // XOR changes both the bits from 1 to 0 or 0 to 1
+        return num ^ mask;
+
     }
 
 
