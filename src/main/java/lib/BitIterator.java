@@ -13,7 +13,7 @@ public class BitIterator implements Iterator {
     private List<Byte> message;
     private Byte currentByte;
     private int bitsIteratedInByte = 0;
-    private final int BITS_IN_A_BYTE = 8;
+    public static final int BITS_IN_A_BYTE = 8;
     public static final char END_DELIMITER = '\0';
 
     public BitIterator(String message) throws UnsupportedEncodingException {
