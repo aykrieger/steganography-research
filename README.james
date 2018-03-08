@@ -2,6 +2,25 @@ Weekly Summary
 James Vaughn
 
 ------------------------------------------------------------------------------------
+Week 3: 2018-03-08
+Changes to the Gantt schedule:
+I am working on DWT before DCT due to DWT having less ambiguity
+
+Files changed:
+-src/main/java/frequency/DWT/*
+I added a main method which will be able to do all of the application logic one the encoder is done.
+I also have started working out the logic for the encoder. I added HaarTransform as a placeholder for when I implement it.
+
+Work done:
+I finished the application logic, so all I will need to do now is implement the encoder logic.
+I wrote out the pseudo code that will implement the encode and decode functions.
+I just need to figure out how the Haar Wavelet Transform works, and then I can start implementing all of the code
+
+Non-code work done:
+I spent some time working out the exact logic used in the paper which describes DWT and I have a good understanding now of how it works.
+I am currently working with our math advisor to understand how the actual Discrete and Haar transforms work so I can implement or at least work out the logic for it.
+
+------------------------------------------------------------------------------------
 Week 2: 2018-03-02
 Changes to the Gantt schedule:
 I am continuing to work on some of the easier techniques to give me more time to research DWT as it is pretty involved.
