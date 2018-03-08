@@ -1,6 +1,7 @@
-package warden;
+package warden.BitDeletion;
 
 import org.apache.commons.cli.*;
+import warden.BitDeletion.BitDeleter;
 
 import java.io.IOException;
 

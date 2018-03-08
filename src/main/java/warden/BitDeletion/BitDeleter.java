@@ -1,4 +1,4 @@
-package warden;
+package warden.BitDeletion;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
