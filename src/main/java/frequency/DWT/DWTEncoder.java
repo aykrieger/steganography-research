@@ -54,7 +54,6 @@ public class DWTEncoder {
         BitIterator B = new BitIterator(message);
 
         BufferedImage C = ImageIO.read(new File(this.imageFileName)); //size is MxN
-
         BufferedImage I = apply2DHaarDWT(C);
 
         //Embed all of the message data into the transformed image blocks
@@ -85,8 +84,8 @@ public class DWTEncoder {
         BitBuilder result = new BitBuilder();
         int b = 0x00;
         BufferedImage S = ImageIO.read(new File(this.imageFileName));
-
         BufferedImage I = apply2DHaarDWT(S);
+
         //for each color component: R, G, B:
         //  while there is message data left to get and image data:
         //      form a 3x2 block of image data; the blocks are taken from the following bands:
