@@ -5,7 +5,6 @@ import lib.BitIterator;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -58,15 +57,17 @@ public class DWTEncoder {
 
         //Embed all of the message data into the transformed image blocks
 
-        //for each color component: R, G, B:
-        //  while there is message data and image data:
-        //      form a 3x2 block of image data; the blocks are taken from the following bands:
-        //          HH HH
-        //          HL HL
-        //          LH LH
-        //      embed a bit of the message in the LSB of each of these values for the current color component
+        //for component <- {R: 0xfffeffff, G: 0xfffffeff, B: 0xfffffffe}
+        //    offset <- {R: 16, G: 8, B: 0}:
+        //  while B is not empty and I has next:
+        //      block <- [[next HH pixel, next HH pixel],
+        //                [next HL pixel, next HL pixel],
+        //                [next LH pixel, next LH pixel]]
+        //      for segment <- block:
+        //          segment = (segment & component) | (nextBit(B) << offset)
 
         //Store the inverted image
+        //Inverted image is the final stego image with the message embedded in the DWT values but not the final RGB
         this.stegoImage = Optional.of(invert2DHaarDWT(I));
     }
 
@@ -86,13 +87,14 @@ public class DWTEncoder {
         BufferedImage S = ImageIO.read(new File(this.imageFileName));
         BufferedImage I = apply2DHaarDWT(S);
 
-        //for each color component: R, G, B:
-        //  while there is message data left to get and image data:
-        //      form a 3x2 block of image data; the blocks are taken from the following bands:
-        //          HH HH
-        //          HL HL
-        //          LH LH
-        //      take the last bit from the LSB of each of these values for the current color component
+        //for component <- {R: 0x00010000, G: 0x00000100, B: 0x00000001}
+        //    offset <- {R: 16, G: 8, B: 0}:
+        //  while I has next and End Delimiter has not been reached:
+        //      block <- [[next HH pixel, next HH pixel],
+        //                [next HL pixel, next HL pixel],
+        //                [next LH pixel, next LH pixel]]
+        //      for segment <- block:
+        //          result.append(segment & component) >> offset)
 
         //return final string formed from bytes
         return null;

@@ -10,4 +10,9 @@ public class HaarTransform {
     public static int[] TwoDimensional(int[] input) {
         return input;
     }
+
+    // TODO
+    public static int[] InvertedTwoDimensional(int[] input) {
+        return input;
+    }
 }
