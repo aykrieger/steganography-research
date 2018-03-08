@@ -17,7 +17,7 @@ public class Main {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
-            formatter.printHelp("LSB encoder", options);
+            formatter.printHelp("DWT encoder", options);
 
             System.exit(1);
             return;
@@ -46,7 +46,7 @@ public class Main {
 
         else {
             System.out.println("No action selected:\n");
-            formatter.printHelp("LSB encoder", options);
+            formatter.printHelp("DWT encoder", options);
         }
     }
 
