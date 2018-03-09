@@ -32,12 +32,14 @@ public class RawQuickPair {
                 // Pixel
                 int pixelColor = image.getRGB(x, y);
                 // break up the pixel into the LSB and the other bits
-
+                int red = ((pixelColor & 0x00fe0000) >> 17);
+                int green = ((pixelColor & 0x0000fe00) >>9);
+                int blue = ((pixelColor& 0x000000fe) >> 1);
                 int redLastBit = ((pixelColor & 0x00010000) >> 14);
                 int greenLastBit = ((pixelColor & 0x00000100) >> 7);
                 int blueLastBit = (pixelColor & 0x00000001) ;
 
-                int index = (pixelColor & 0x00fefefe);
+                int index = red+green+blue;
 
                 int leastSignificantBitIndex = redLastBit + greenLastBit + blueLastBit;
                 byte leastSignificantBits = pixelArray[index];
