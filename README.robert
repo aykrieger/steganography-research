@@ -1,6 +1,10 @@
 Weekly Summary
 Robert Milne
 
+Week 3: 2018-03-08
+Worked on testing out raw quick pair to correctly identify stegonography.
+Files changed: steganography-research/src/main/java/warden/RawQuickPair/Main.java
+
 Week 2: 2018-03-02
 Worked on implementing raw quick pair warden. It is fully implemented but needs to be tested to see that it functions correctly and to find the correct ratio.
 Files changed: steganography-research/src/main/java/warden/BitDeletion/RawQuickPair.java
