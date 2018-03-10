@@ -4,26 +4,25 @@ import lib.DirectoryConfigReader;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.IOException;
 
 import spatial.GreenBlue.GreenBlueEncoder;
-
-import java.util.Arrays;
 
 public class GreenBlueEncoderTest {
 
     DirectoryConfigReader directories = new DirectoryConfigReader();
 
     @Test
-    public void encode_decode_nominal1() {
+    public void encode_decode_nominal() throws IOException {
         String inputImg = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImg = directories.outputImagesDir + "green_blue_output_1.png";
-        GreenBlueEncoder.encode(inputImg, outputImg, "Test_Message");
+        GreenBlueEncoder.encode(inputImg, outputImg, "Test_Message", 803572);
     }
 
     @Test
     public void scrambleMessage_nominal() {
         /*
-        ASCII   Binary    Scrambled  Return (Decimal)
+        ASCII   Binary    Scrambled  Decimal Val
         T  84   01010100  00101010   42
         e  101  01100101  10100110   166
         s  115  01110011  11001110   206
@@ -39,8 +38,9 @@ public class GreenBlueEncoderTest {
                 00000000  00000000   0
          */
         String inputMes = "Test Message";
-        int[] expected = {42, 166, 206, 46, 4, 178, 166, 206, 206, 134, 230, 166, 0};
-        assertTrue(Arrays.equals(expected, GreenBlueEncoder.scrambleMessage(inputMes)));
+        String expected = "*¦Î.\u0004²¦ÎÎ\u0086æ¦\u0000";
+        String result = GreenBlueEncoder.scrambleMessage(inputMes);
+        assertTrue(expected.equals(result));
     }
 
     @Test

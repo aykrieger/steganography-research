@@ -3,6 +3,10 @@ package spatial.GreenBlue;
 import lib.BitBuilder;
 import lib.BitIterator;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,43 +18,69 @@ import java.util.Collections;
  */
 public class GreenBlueEncoder {
 
-    public static void encode(String inputImg, String outputImg, String origMessage) {
-        /*
+    public static void encode(String inputImg, String outputImg, String origMessage, int secretKey)
+    throws IOException{
+        /* +
         Step 1
         Select Secret Key Sk
         Convert message into binary stream M
         */
 
-        /*
+        /* +
         Step 2
         Scramble original message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
          */
+        String scrambledMes = GreenBlueEncoder.scrambleMessage(origMessage);
 
-        int[] bitMes = GreenBlueEncoder.scrambleMessage(origMessage);
-        String decodedMessage = GreenBlueEncoder.unscrambleMessage(bitMes);
-        int cat = 5;
+        BitIterator bitMessage;
+        try {
+            bitMessage = new BitIterator(scrambledMes);
 
-        /*
-        Step 3
-        Calculate R0, the number of 0's in the Red channel of the current pixel.
-        Calculate R1 - Sk - R0
-         */
+        } catch (UnsupportedEncodingException e){
+            throw new RuntimeException("Could not encode message: " + e.getMessage());
+        }
 
-        /*
-        Step 4
-        Calculate position of bit in Blue channel Pb = ((Iz + R1) % 7) + 1
-         */
+        BufferedImage image = ImageIO.read(new File(inputImg));
+        int imageHeight = image.getHeight();
+        int imageWidth = image.getWidth();
+        int imageSize = imageHeight * imageWidth;
 
-        /*
-        Step 5
+        for (int y = 0; y < imageHeight; y ++) {
+            for (int x = 0; x < imageWidth; x ++) {
+                int pixelVal = image.getRGB(x,y);
 
-        if bit value of Pb position of the current pixel in the Blue channel and current
-        bit of Mm are equal,
-            LSB position of Blue component is set to 0
-        else
-            LSB position of Blue component is set to 1
-         */
+                /* +
+                Step 3
+                Calculate R0, the number of 0's in the Red channel of the current pixel.
+                Calculate R1 = Sk - R0
+                 */
+
+                int redChannel = GreenBlueEncoder.getRed(pixelVal);
+                int num0inRed = BitIterator.BITS_IN_A_BYTE - Integer.bitCount(redChannel);
+                int keyRed = secretKey - num0inRed;
+
+                /* +
+                Step 4
+                Calculate position of bit in Blue channel Pb = ((Iz + R1) % 7) + 1
+                 */
+
+                int blueChannel = GreenBlueEncoder.getBlue(pixelVal);
+                int keyBlue = ((imageSize + keyRed) % 7) + 1;
+
+                /*
+                Step 5
+                if bit value of Pb position of the current pixel in the Blue channel and current
+                bit of Mm are equal,
+                    LSB position of Blue component is set to 0
+                else
+                    LSB position of Blue component is set to 1
+                 */
+
+            }
+        }
+
+
 
         /*
         Step 6
@@ -89,7 +119,7 @@ public class GreenBlueEncoder {
          */
     }
 
-    public static int[] scrambleMessage(String message) {
+    public static String scrambleMessage(String message) {
         message += BitIterator.END_DELIMITER;
         BitIterator bitMessage;
         try {
@@ -98,8 +128,7 @@ public class GreenBlueEncoder {
             throw new RuntimeException("Could not encode message: " + e.getMessage());
         }
 
-        // Each element represents one byte of the scrambled message
-        ArrayList<Integer> scrambledMesBytes = new ArrayList<>();
+        StringBuilder scrambledMesBuilder = new StringBuilder();
 
         while (bitMessage.hasNext()) {
 
@@ -114,17 +143,18 @@ public class GreenBlueEncoder {
                 }
             }
             // Swaps bits in positions 1 and 8, 2 and 7, 3 and 6, and 4 and 5
-            Collections.swap(bitList, 0, 7);
-            Collections.swap(bitList, 1, 6);
-            Collections.swap(bitList, 2, 5);
-            Collections.swap(bitList, 3, 4);
+            // If we do not have a set of 8 bits, do not swap
+            if (bitList.size() == 8) {
+                Collections.swap(bitList, 0, 7);
+                Collections.swap(bitList, 1, 6);
+                Collections.swap(bitList, 2, 5);
+                Collections.swap(bitList, 3, 4);
+            }
 
             String bitString = String.join("", bitList);
-            scrambledMesBytes.add(Integer.parseInt(bitString, 2));
+            scrambledMesBuilder.append((char) Integer.parseInt(bitString, 2));
         }
-        return scrambledMesBytes.stream()
-                                .mapToInt(Integer::intValue)
-                                .toArray();
+        return scrambledMesBuilder.toString();
     }
 
     public static String unscrambleMessage(int[] bitMes) {
@@ -171,6 +201,28 @@ public class GreenBlueEncoder {
         return num ^ mask;
     }
 
+    public static int getRed(int pixelValue) {
+        return (pixelValue >> 16) & 0xFF;
+    }
+
+    public static int getGreen(int pixelValue) {
+        return (pixelValue >> 8) & 0xFF;
+    }
+
+    public static int getBlue(int pixelValue) {
+        return (pixelValue >> 0) & 0xFF;
+    }
+
+    /**
+     * Returns the bit at the specified position.
+     *
+     * @param num Number to check
+     * @param pos Position of the bit, where the LSB is at position 0
+     * @return
+     */
+    public static int getBitAt(int num, int pos) {
+        return (num >> pos) & 1;
+    }
 
     public String decode() {
         return "";
