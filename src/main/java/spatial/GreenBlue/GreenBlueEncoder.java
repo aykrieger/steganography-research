@@ -3,11 +3,9 @@ package spatial.GreenBlue;
 import lib.BitBuilder;
 import lib.BitIterator;
 
-import java.awt.image.BufferedImage;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Optional;
 
 /*
  This encoding scheme embeds the message within the 2nd to 8th bit in the blue or green
@@ -105,12 +103,11 @@ public class GreenBlueEncoder {
 
         while (bitMessage.hasNext()) {
 
-            ArrayList<Byte> bitList = new ArrayList<>();
+            ArrayList<String> bitList = new ArrayList<>();
+            // Convert the binary number to a list of
             for (int bitCount = 0; bitCount < BitIterator.BITS_IN_A_BYTE; bitCount++) {
                 if (bitMessage.hasNext()) {
-                    // BitIterator's next method returns bits as bytes, so currentBit is a byte
-                    // with the value of either 0 or 1
-                    bitList.add(bitMessage.next());
+                    bitList.add(String.valueOf(bitMessage.next()));
                 } else {
                     break;
                 }
@@ -124,15 +121,8 @@ public class GreenBlueEncoder {
                 Collections.swap(bitList, 3, 4);
             }
 
-            int newByte = 0x00;
-            // Converts the bitList to a single byte
-            // Ex: bitList = 0, 1, 1, 0, 0, 1, 0
-            //     newByte = 0  1  1  0  0  1  0
-            for (int i = 0; i < bitList.size(); i++) {
-                int currentByte = bitList.get(i);
-                newByte = newByte | (currentByte << i);
-            }
-            scrambledMesBytes.add(newByte);
+            String bitString = String.join("", bitList);
+            scrambledMesBytes.add(Integer.parseInt(bitString, 2));
         }
         int[] scrambledMesBits = scrambledMesBytes.stream()
                                                   .mapToInt(Integer::intValue)

@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import spatial.GreenBlue.GreenBlueEncoder;
 
+import java.util.Arrays;
+
 public class GreenBlueEncoderTest {
 
     DirectoryConfigReader directories = new DirectoryConfigReader();
@@ -19,13 +21,30 @@ public class GreenBlueEncoderTest {
     }
 
     @Test
-    public void scrambleMessage_nominal1() {
+    public void scrambleMessage_nominal() {
+        /*
+        ASCII   Binary    Scrambled  Return (Decimal)
+        T  84   01010100  00101010   42
+        e  101  01100101  10100110   166
+        s  115  01110011  11001110   206
+        t  116  01110100  00101110   46
+        '' 32   00100000  00000100   4
+        M  77   01001101  10110010   178
+        e  101  01100101  10100110   166
+        s  115  01110011  11001110   206
+        s  115  01110011  11001110   206
+        a  97   01100001  10000110   134
+        g  103  01100111  11100110   230
+        e  101  01100101  10100110   166
+                00000000  00000000   0
+         */
         String inputMes = "Test Message";
-
+        int[] expected = {42, 166, 206, 46, 4, 178, 166, 206, 206, 134, 230, 166, 0};
+        assertTrue(Arrays.equals(expected, GreenBlueEncoder.scrambleMessage(inputMes)));
     }
 
     @Test
-    public void swapBits_bits_are_both_1() {
+    public void swapBits_bits_are_the_same() {
         int input_num = Integer.parseInt("0100100111", 2); // decimal value is 295
         int pos_1 = 0;
         int pos_2 = 2;
