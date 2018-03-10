@@ -44,6 +44,14 @@ public class GreenBlueEncoderTest {
     }
 
     @Test
+    public void unscrambleMessage_nominal() {
+        int[] input = {42, 166, 206, 46, 4, 178, 166, 206, 206, 134, 230, 166, 0};
+        String expected = "Test Message";
+        String result = GreenBlueEncoder.unscrambleMessage(input);
+        assertTrue(expected.equals(result));
+    }
+
+    @Test
     public void swapBits_bits_are_the_same() {
         int input_num = Integer.parseInt("0100100111", 2); // decimal value is 295
         int pos_1 = 0;

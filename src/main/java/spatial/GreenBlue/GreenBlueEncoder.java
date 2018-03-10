@@ -104,7 +104,8 @@ public class GreenBlueEncoder {
         while (bitMessage.hasNext()) {
 
             ArrayList<String> bitList = new ArrayList<>();
-            // Convert the binary number to a list of
+            // Convert the binary number to a list of strings where each
+            // string is either 0 or 1
             for (int bitCount = 0; bitCount < BitIterator.BITS_IN_A_BYTE; bitCount++) {
                 if (bitMessage.hasNext()) {
                     bitList.add(String.valueOf(bitMessage.next()));
@@ -113,25 +114,21 @@ public class GreenBlueEncoder {
                 }
             }
             // Swaps bits in positions 1 and 8, 2 and 7, 3 and 6, and 4 and 5
-            // If we do not have a set of 8 bits, do not swap
-            if (bitList.size() == 8) {
-                Collections.swap(bitList, 0, 7);
-                Collections.swap(bitList, 1, 6);
-                Collections.swap(bitList, 2, 5);
-                Collections.swap(bitList, 3, 4);
-            }
+            Collections.swap(bitList, 0, 7);
+            Collections.swap(bitList, 1, 6);
+            Collections.swap(bitList, 2, 5);
+            Collections.swap(bitList, 3, 4);
 
             String bitString = String.join("", bitList);
             scrambledMesBytes.add(Integer.parseInt(bitString, 2));
         }
-        int[] scrambledMesBits = scrambledMesBytes.stream()
-                                                  .mapToInt(Integer::intValue)
-                                                  .toArray();
-        return scrambledMesBits;
+        return scrambledMesBytes.stream()
+                                .mapToInt(Integer::intValue)
+                                .toArray();
     }
 
     public static String unscrambleMessage(int[] bitMes) {
-        BitBuilder bitBuild = new BitBuilder();
+        StringBuilder builder = new StringBuilder();
         int mesLength = bitMes.length;
 
         for (int i = 0; i < mesLength; i++) {
@@ -140,28 +137,11 @@ public class GreenBlueEncoder {
             currentByte = GreenBlueEncoder.swapBits(currentByte, 1, 6);
             currentByte = GreenBlueEncoder.swapBits(currentByte, 2, 5);
             currentByte = GreenBlueEncoder.swapBits(currentByte, 3, 4);
-
-            String byteString = Integer.toBinaryString(currentByte);
-            if (byteString.length() < 8) {
-                StringBuilder builder = new StringBuilder();
-                int zerosToAdd = 8 - byteString.length();
-                while (zerosToAdd > 0) {
-                    builder.append("0");
-                    zerosToAdd--;
-                }
-                byteString = builder.toString() + byteString;
-            }
-            // Splits byteString into individual string characters
-            String[] stringArr = byteString.split("(?!^)");
-
-            for (int k = 0; k < BitIterator.BITS_IN_A_BYTE; k++) {
-                int currentBit = Integer.parseInt(stringArr[k]);
-                if (bitBuild.append((byte)currentBit)) {
-                    return bitBuild.toString();
-                }
-            }
+            builder.append((char) currentByte);
         }
-        return bitBuild.toString();
+        // Delete the decimeter character
+        builder.setLength(builder.length() - 1);
+        return builder.toString();
     }
 
     /**
