@@ -16,9 +16,6 @@ import java.util.Optional;
  */
 public class GreenBlueEncoder {
 
-    private String imageFileName;
-    private Optional<BufferedImage> stegoImage = Optional.empty();
-
     public static void encode(String inputImg, String outputImg, String origMessage) {
         /*
         Step 1
@@ -94,7 +91,7 @@ public class GreenBlueEncoder {
          */
     }
 
-    private static int[] scrambleMessage(String message) {
+    public static int[] scrambleMessage(String message) {
         message += BitIterator.END_DELIMITER;
         BitIterator bitMessage;
         try {
@@ -143,7 +140,7 @@ public class GreenBlueEncoder {
         return scrambledMesBits;
     }
 
-    private static String unscrambleMessage(int[] bitMes) {
+    public static String unscrambleMessage(int[] bitMes) {
         BitBuilder bitBuild = new BitBuilder();
         int mesLength = bitMes.length;
 
@@ -177,7 +174,19 @@ public class GreenBlueEncoder {
         return bitBuild.toString();
     }
 
-    private static int swapBits(int num, int pos1, int pos2) {
+    /**
+     * Returns the given number after swapping the two specified bits.
+     * The least significant bit is in position 0, second LSB is in position 1, etc.
+     * For example, given the decimal number 10, swap bits in positions 0 and 3:
+     *     Original: 1 0 1 0 (10 in decimal)
+     *      Returns: 0 0 1 1 (3 in decimal)
+     * The position numbers should also be less than 64 to prevent overflow.
+     * @param num  Original number
+     * @param pos1 Position of the first bit to swap
+     * @param pos2 Position of the second bit to swap
+     * @return     Original number with swapped bits
+     */
+    public static int swapBits(int num, int pos1, int pos2) {
         // Bit at position 1
         int bit1 = (num >> pos1) & 1;
         // Bit at position 2
@@ -190,7 +199,6 @@ public class GreenBlueEncoder {
         int mask = (1 << pos1) | (1 << pos2);
         // XOR changes both the bits from 1 to 0 or 0 to 1
         return num ^ mask;
-
     }
 
 
