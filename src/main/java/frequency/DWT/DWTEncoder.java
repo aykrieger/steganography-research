@@ -68,11 +68,31 @@ public class DWTEncoder {
 
         //Store the inverted image
         //Inverted image is the final stego image with the message embedded in the DWT values but not the final RGB
-        this.stegoImage = Optional.of(invert2DHaarDWT(I));
+        this.stegoImage = Optional.of(I);//Optional.of(invert2DHaarDWT(I));
     }
 
     //TODO implement
     private BufferedImage apply2DHaarDWT(BufferedImage C) {
+        double[][] pixelData = new double[C.getHeight()][C.getWidth()];
+
+        for (int row = 0; row < C.getHeight(); row++) {
+            for (int col = 0; col < C.getWidth(); col++) {
+                //for now, just take the B plane
+                //TODO
+                pixelData[row][col] = C.getRGB(col, row) & 0x000000FF;
+            }
+        }
+
+        pixelData = HaarTransform.TwoDimensional(pixelData);
+
+        for (int row = 0; row < C.getHeight(); row++) {
+            for (int col = 0; col < C.getWidth(); col++) {
+                //for now, just take the B plane
+                //TODO
+                C.setRGB(col, row, (C.getRGB(col, row) & 0xFFFFFF00) + (int) pixelData[col][row]);
+            }
+        }
+
         return C;
     }
 
