@@ -70,7 +70,8 @@ public class DWTEncoder {
 
         //Store the inverted image
         //Inverted image is the final stego image with the message embedded in the DWT values but not the final RGB
-        this.stegoImage = Optional.of(reverseHaar(C, forwardHaar(C)));
+        //this.stegoImage = Optional.of(reverseHaar(C, forwardHaar(C)));
+        this.stegoImage = Optional.of(visualizeHaar(C));
     }
 
     private double[][] forwardHaar(BufferedImage C) {
@@ -95,12 +96,49 @@ public class DWTEncoder {
         Transform t = new Transform( new FastWaveletTransform( new Haar1()));
         double[][] pixelData = t.reverse(coefficients, 1, 1);
 
-        //create the haar image
         for (int row = 0; row < C.getHeight(); row++) {
             for (int col = 0; col < C.getWidth(); col++) {
                 //for now, just take the B plane
                 //TODO
                 int newColor = 0xFF000000 + ((int) pixelData[col][row] << 16) + ((int) pixelData[col][row] << 8) + ((int) pixelData[col][row]);
+                C.setRGB(col, row, newColor);
+            }
+        }
+
+        return C;
+    }
+
+    private BufferedImage visualizeHaar(BufferedImage C) {
+        double[][] pixelData = new double[C.getHeight()][C.getWidth()];
+
+        //get the pixel data to transform
+        for (int row = 0; row < C.getHeight(); row++) {
+            for (int col = 0; col < C.getWidth(); col++) {
+                //for now, just take the B plane
+                //TODO
+                pixelData[col][row] = C.getRGB(col, row) & 0x000000FF;
+            }
+        }
+
+
+        //apply the haar function
+        Transform t = new Transform( new FastWaveletTransform( new Haar1()));
+        pixelData = t.forward(pixelData, 1, 1);
+        double max = pixelData[0][0];
+        for(int i = 0; i < pixelData.length; i++) {
+            for(int j = 0; j < pixelData[0].length; j++) {
+                if(max < pixelData[i][j]) {
+                    max = pixelData[i][j];
+                }
+            }
+        }
+        //create the haar image
+        for (int row = 0; row < C.getHeight(); row++) {
+            for (int col = 0; col < C.getWidth(); col++) {
+                //for now, just take the B plane
+                //TODO
+                double val = 255 * (pixelData[col][row] / max);
+                int newColor = 0xFF000000 + ((int) val << 16) + ((int) val << 8) + ((int) val);
                 C.setRGB(col, row, newColor);
             }
         }
