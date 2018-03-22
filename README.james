@@ -2,6 +2,25 @@ Weekly Summary
 James Vaughn
 
 ------------------------------------------------------------------------------------
+Week 4: 2018-03-21
+Changes to the Gantt schedule:
+---
+
+Files changed:
+-src/main/java/frequency/DWT/DWTEncoder
+I messed with the interface for performing the Haar Transform
+I have made the logic for handling the haar transform as a proof-of-concept for grey-scale images.
+I just need to perform the LSB embedding now.
+
+Work done:
+I got haar transform logic to work well enough to at least play with and experiment with.
+Everything for haar is done. I just need to implement the embedding and DWT is done.
+
+Non-code work done:
+I spent a few hours talking with various professors and by myself reviewing the math and logic behind the haar transform.
+I believe I now have a good grasp on how it works and the operations it performs.
+
+------------------------------------------------------------------------------------
 Week 3: 2018-03-08
 Changes to the Gantt schedule:
 I am working on DWT before DCT due to DWT having less ambiguity

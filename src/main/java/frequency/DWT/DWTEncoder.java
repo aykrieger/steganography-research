@@ -1,5 +1,8 @@
 package frequency.DWT;
 
+import jwave.Transform;
+import jwave.transforms.FastWaveletTransform;
+import jwave.transforms.wavelets.haar.Haar1;
 import lib.BitBuilder;
 import lib.BitIterator;
 
@@ -53,7 +56,6 @@ public class DWTEncoder {
         BitIterator B = new BitIterator(message);
 
         BufferedImage C = ImageIO.read(new File(this.imageFileName)); //size is MxN
-        BufferedImage I = apply2DHaarDWT(C);
 
         //Embed all of the message data into the transformed image blocks
 
@@ -68,36 +70,42 @@ public class DWTEncoder {
 
         //Store the inverted image
         //Inverted image is the final stego image with the message embedded in the DWT values but not the final RGB
-        this.stegoImage = Optional.of(I);//Optional.of(invert2DHaarDWT(I));
+        this.stegoImage = Optional.of(reverseHaar(C, forwardHaar(C)));
     }
 
-    //TODO implement
-    private BufferedImage apply2DHaarDWT(BufferedImage C) {
+    private double[][] forwardHaar(BufferedImage C) {
         double[][] pixelData = new double[C.getHeight()][C.getWidth()];
 
+        //get the pixel data to transform
         for (int row = 0; row < C.getHeight(); row++) {
             for (int col = 0; col < C.getWidth(); col++) {
                 //for now, just take the B plane
                 //TODO
-                pixelData[row][col] = C.getRGB(col, row) & 0x000000FF;
+                pixelData[col][row] = C.getRGB(col, row) & 0x000000FF;
             }
         }
 
-        pixelData = HaarTransform.TwoDimensional(pixelData);
+        //apply the haar function
+        Transform t = new Transform( new FastWaveletTransform( new Haar1()));
+        return t.forward(pixelData, 1, 1);
+    }
 
+    private BufferedImage reverseHaar(BufferedImage C, double[][] coefficients) {
+        //apply the haar function
+        Transform t = new Transform( new FastWaveletTransform( new Haar1()));
+        double[][] pixelData = t.reverse(coefficients, 1, 1);
+
+        //create the haar image
         for (int row = 0; row < C.getHeight(); row++) {
             for (int col = 0; col < C.getWidth(); col++) {
                 //for now, just take the B plane
                 //TODO
-                C.setRGB(col, row, (C.getRGB(col, row) & 0xFFFFFF00) + (int) pixelData[col][row]);
+                int newColor = 0xFF000000 + ((int) pixelData[col][row] << 16) + ((int) pixelData[col][row] << 8) + ((int) pixelData[col][row]);
+                C.setRGB(col, row, newColor);
             }
         }
 
         return C;
-    }
-
-    private BufferedImage invert2DHaarDWT(BufferedImage I) {
-        return I;
     }
 
     //TODO implement
@@ -105,7 +113,6 @@ public class DWTEncoder {
         BitBuilder result = new BitBuilder();
         int b = 0x00;
         BufferedImage S = ImageIO.read(new File(this.imageFileName));
-        BufferedImage I = apply2DHaarDWT(S);
 
         //for component <- {R: 0x00010000, G: 0x00000100, B: 0x00000001}
         //    offset <- {R: 16, G: 8, B: 0}:
