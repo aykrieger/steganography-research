@@ -77,6 +77,14 @@ public class GreenBlueEncoder {
                     LSB position of Blue component is set to 1
                  */
 
+                Byte nextBit = bitMessage.next();
+
+                if (keyBlue == nextBit) {
+                    // LSB position of Blue component is set to 0
+                } else {
+                    // LSB position of Blue component is set to 1
+                }
+
             }
         }
 
