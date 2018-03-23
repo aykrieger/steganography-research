@@ -1,5 +1,9 @@
 Weekly Summary
 Robert Milne
+Week 4: 2018-23-08
+worked on DST and create the main file and the actuall algorithm. 
+files changed: steganography-research/src/main/java/warden/DST/DescriteSpringTransform.java, steganography-research/src/main/java/warden/DST/Main.java
+
 
 Week 3: 2018-03-08
 Worked on testing out raw quick pair to correctly identify stegonography.
