@@ -1,6 +1,12 @@
 Weekly Summary
 Andy Krieger
 
+## Week 3: 2018-02-25 to 2018-03-09
+
+I continued implementing the Green Blue encoding algorithm. I first finished and cleaned up the message scrambling and unscrambling code, created tests for those methods, and then started on processing the pixel values of an image.
+
+The files I worked on were `src/main/java/spatial/GreenBlue/GreenBlueEncoder.java` and `src/test/java/spatial.LSB/GreenBlueEncoderTest.java`.
+
 ## Week 2: 2018-02-24 to 2018-03-02
 
 I worked on implementing the Green Blue encoding and decoding algorithm  this week. I also set up some simple testing configuration files so we can use unit testing in the future.

@@ -58,6 +58,13 @@
             <version>1.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.sciss</groupId>
+            <artifactId>jwave</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
+
     </dependencies>
 
 </project>
