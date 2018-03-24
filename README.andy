@@ -1,6 +1,10 @@
 Weekly Summary
 Andy Krieger
 
+## Week 4: 2018-03-17 to 2018-03-23
+
+I read another paper to better understand the encoding algorithm because some of the steps for the algorithm are not well-defined in the original paper. 
+
 ## Week 3: 2018-02-25 to 2018-03-09
 
 I continued implementing the Green Blue encoding algorithm. I first finished and cleaned up the message scrambling and unscrambling code, created tests for those methods, and then started on processing the pixel values of an image.

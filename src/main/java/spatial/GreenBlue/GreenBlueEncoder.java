@@ -77,18 +77,23 @@ public class GreenBlueEncoder {
                     LSB position of Blue component is set to 1
                  */
 
+                int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, keyBlue);
                 Byte nextBit = bitMessage.next();
 
-                if (keyBlue == nextBit) {
+                if (bitAtKeyBlue == nextBit) {
                     // LSB position of Blue component is set to 0
+                    // LSB of Blue component in pixel is at position 0
+                    pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 0);
                 } else {
                     // LSB position of Blue component is set to 1
+                    // LSB of Blue component in pixel is at position 0
+                    pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 1);
                 }
-
+                image.setRGB(x, y, pixelVal);
             }
         }
 
-
+        int cat = 5;
 
         /*
         Step 6
@@ -225,11 +230,27 @@ public class GreenBlueEncoder {
      * Returns the bit at the specified position.
      *
      * @param num Number to check
-     * @param pos Position of the bit, where the LSB is at position 0
+     * @param pos Position of the bit, where pos = 0 indicates the LSB
      * @return
      */
     public static int getBitAt(int num, int pos) {
         return (num >> pos) & 1;
+    }
+
+    /**
+     * Sets the bit at the specified position.
+     *
+     * @param num      Number to check
+     * @param pos      Position of the bit, where pos = 0 indicates the LSB
+     * @param bitValue Either 0 or 1
+     * @return
+     */
+    public static int setBitAt(int num, int pos, int bitValue) {
+        if (bitValue == 0) {
+            return num % ~(1 << pos);
+        } else {
+            return num | (1 << pos);
+        }
     }
 
     public String decode() {

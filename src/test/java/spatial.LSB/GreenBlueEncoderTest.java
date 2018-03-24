@@ -67,4 +67,18 @@ public class GreenBlueEncoderTest {
         int pos_2 = 7;
         assertEquals(419, GreenBlueEncoder.swapBits(input_num, pos_1, pos_2));
     }
+
+    @Test
+    public void getBitAt_nominal1() {
+        int input_num = Integer.parseInt("0100100111", 2);
+        int input_pos = 0;
+        assertEquals(1, GreenBlueEncoder.getBitAt(input_num, input_pos));
+    }
+
+    @Test
+    public void getBitAt_nominal2() {
+        int input_num = Integer.parseInt("0100100111", 2);
+        int input_pos = 3;
+        assertEquals(0, GreenBlueEncoder.getBitAt(input_num, input_pos));
+    }
 }
