@@ -46,8 +46,20 @@ public class GreenBlueEncoder {
         int imageWidth = image.getWidth();
         int imageSize = imageHeight * imageWidth;
 
+        // Green component of image is only encoded if the message cannot
+        // fit in the Blue component
+        boolean encodeGreen = true;
+        encodingLoopBlue:
         for (int y = 0; y < imageHeight; y ++) {
             for (int x = 0; x < imageWidth; x ++) {
+
+                if (!bitMessage.hasNext()) {
+                    // The message fit in the Blue component of the image, so
+                    // we do not have to encode the Green component
+                    encodeGreen = false;
+                    break encodingLoopBlue;
+                }
+
                 int pixelVal = image.getRGB(x,y);
 
                 /* +
@@ -55,7 +67,6 @@ public class GreenBlueEncoder {
                 Calculate R0, the number of 0's in the Red channel of the current pixel.
                 Calculate R1 = Sk - R0
                  */
-
                 int redChannel = GreenBlueEncoder.getRed(pixelVal);
                 int num0inRed = BitIterator.BITS_IN_A_BYTE - Integer.bitCount(redChannel);
                 int keyRed = secretKey - num0inRed;
@@ -64,7 +75,6 @@ public class GreenBlueEncoder {
                 Step 4
                 Calculate position of bit in Blue channel Pb = ((Iz + R1) % 7) + 1
                  */
-
                 int blueChannel = GreenBlueEncoder.getBlue(pixelVal);
                 int keyBlue = ((imageSize + keyRed) % 7) + 1;
 
@@ -77,46 +87,199 @@ public class GreenBlueEncoder {
                     LSB position of Blue component is set to 1
                  */
 
+                int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, keyBlue);
+                Byte nextBit = bitMessage.next();
+
+                if (bitAtKeyBlue == nextBit) {
+                    // LSB position of Blue component is set to 0
+                    // LSB of Blue component in pixel is at position 0
+                    pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 0);
+                } else {
+                    // LSB position of Blue component is set to 1
+                    // LSB of Blue component in pixel is at position 0
+                    pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 1);
+                }
+                image.setRGB(x, y, pixelVal);
             }
         }
-
-
 
         /*
         Step 6
         Repeat steps 3 to 5 until Mm is finished or Blue component is finished
          */
 
-        /*
-        Step 7
-        if Blue component is finished but Mm still remains,
+        if (encodeGreen) {
+            /*
+            Step 7
+            if Blue component is finished but Mm still remains,
             Select the starting pixel of cover image
-         */
+            */
+            encodingLoopGreen:
+            for (int y = 0; y < imageHeight; y ++) {
+                for (int x = 0; x < imageWidth; x ++) {
 
-        /*
-        Step 8
-        Calculate R2, the number of 1s in the Red channel of the current pixel.
-        Calculate R3 = Sk - R2
-         */
+                    if (!bitMessage.hasNext()) {
+                        break encodingLoopGreen;
+                    }
 
-        /*
-        Step 9
-        Calculate the position of bit in Green channel Pg = ((Iz + R3) % 7) + 1
-         */
+                    int pixelVal = image.getRGB(x,y);
 
-        /*
-        Step 10
-        if bit value of Pg position of the current pixel in the Green channel and current
-        bit of Mm are equal,
-            LSB position of Green component is set to 0
-        else
-            LSB position of Green component is set to 0
-         */
+                    /*
+                    Step 8
+                    Calculate R2, the number of 1s in the Red channel of the current pixel.
+                    Calculate R3 = Sk - R2
+                     */
+                    int redChannel = GreenBlueEncoder.getRed(pixelVal);
+                    int num1inRed = Integer.bitCount(redChannel);
+                    int keyRed = secretKey - num1inRed;
 
+                    /*
+                    Step 9
+                    Calculate the position of bit in Green channel Pg = ((Iz + R3) % 7) + 1
+                     */
+                    int greenChannel = GreenBlueEncoder.getGreen(pixelVal);
+                    int keyBlue = ((imageSize + keyRed) % 7) + 1;
+
+                    /*
+                    Step 10
+                    if bit value of Pg position of the current pixel in the Green channel and current
+                    bit of Mm are equal,
+                        LSB position of Green component is set to 0
+                    else
+                        LSB position of Green component is set to 1
+                     */
+                    int bitAtKeyBlue = GreenBlueEncoder.getBitAt(greenChannel, keyBlue);
+                    Byte nextBit = bitMessage.next();
+
+                    if (bitAtKeyBlue == nextBit) {
+                        // LSB position of Green component is set to 0
+                        // LSB of Blue component in pixel is at position 8
+                        pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 8, 0);
+                    } else {
+                        // LSB position of Green component is set to 1
+                        // LSB of Blue component in pixel is at position 8
+                        pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 8, 1);
+                    }
+                    image.setRGB(x, y, pixelVal);
+                }
+            }
+        }
         /*
         Step 11
         Repeat steps 8 to 10 until the bit stream is finished
          */
+    }
+
+    public String decode(String inputImage, int secretKey) throws IOException {
+        BitBuilder bitBuildRes = new BitBuilder();
+
+        BufferedImage image = ImageIO.read(new File(inputImage));
+        int imageHeight = image.getHeight();
+        int imageWidth = image.getWidth();
+        int imageSize = imageHeight * imageWidth;
+
+        String scrambledMessage = "";
+
+        // Green component of image is only decoded if the message delimeter has
+        // not been reached while decoding the Blue component
+        boolean decodeGreen = true;
+
+        decodingLoopBlue:
+        for (int y = 0; y < image.getHeight(); y ++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+
+                /*
+                Step 1
+                if LSB of Blue component of the current pixel is 0,
+                    Calculate R0, number of 0's in Red channel of current pixel
+                    Calculate Rz = Sk - R0
+                    Calculate Pb = ((Iz + R1) % 7) + 1
+                    Select the bit at position Pb and store it into the bit stream
+                else
+                    Go to next pixel
+                 */
+                int pixelVal = image.getRGB(x, y);
+                int blueChannel = GreenBlueEncoder.getBlue(pixelVal);
+                if (0 == GreenBlueEncoder.getBitAt(blueChannel, 0)) {
+                    int redChannel = GreenBlueEncoder.getRed(pixelVal);
+                    int num0inRed = BitIterator.BITS_IN_A_BYTE - Integer.bitCount(redChannel);
+                    int keyRed = secretKey - num0inRed;
+
+                    int keyBlue = ((imageSize + keyRed) % 7) + 1;
+                    int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, keyBlue);
+                    if (bitBuildRes.append((byte) bitAtKeyBlue)) {
+                        scrambledMessage = bitBuildRes.toString();
+                        decodeGreen = false;
+                        break decodingLoopBlue;
+                    }
+                }
+            }
+        }
+
+        /*
+        Step 2
+        Repeat step 1 until the bit stream is finished or the blue component is finished
+         */
+
+        /*
+        Step 3
+        if Blue component is finished, but bit stream still remains in image,
+            Select the starting pixel of the cover image
+         */
+        if (decodeGreen) {
+            for (int y = 0; y < image.getHeight(); y ++) {
+                for (int x = 0; x < image.getWidth(); x++) {
+
+                /*
+                Step 1
+                if LSB of Blue component of the current pixel is 0,
+                    Calculate R0, number of 0's in Red channel of current pixel
+                    Calculate Rz = Sk - R0
+                    Calculate Pb = ((Iz + R1) % 7) + 1
+                    Select the bit at position Pb and store it into the bit stream
+                else
+                    Go to next pixel
+                 */
+
+                /*
+                Step 4
+                if the LSB of Green component of the current pixel is 0,
+                    Calculate R2, number of 1's in Red channel of the current pixel
+                    Calculate R3 = Sk - R2
+                    Calculate Pg = ((Iz + R3) % 7) + 1
+                    Select the bit at position Pg and store it in the bit stream
+                 */
+                    int pixelVal = image.getRGB(x, y);
+                    int greenChannel = GreenBlueEncoder.getGreen(pixelVal);
+                    if (0 == GreenBlueEncoder.getBitAt(greenChannel, 0)) {
+                        int redChannel = GreenBlueEncoder.getRed(pixelVal);
+                        int num1inRed = Integer.bitCount(redChannel);
+                        int keyRed = secretKey - num1inRed;
+
+                        int keyGreen = ((imageSize + keyRed) % 7) + 1;
+                        int bitAtKeyBlue = GreenBlueEncoder.getBitAt(greenChannel, keyGreen);
+                        if (bitBuildRes.append((byte) bitAtKeyBlue)) {
+                            return bitBuildRes.toString();
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
+        Step 5
+        Repeat the previous step until the bit stream is finished
+         */
+
+        /*
+        Step 6
+        Unscramble the message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
+        and 4th with 5th. This gives us Mm.
+         */
+        //return GreenBlueEncoder.unscrambleMessage(scrambledMessage);
+
+        // If we never reach the delimiter of the message, return what we have
+        return bitBuildRes.toString();
     }
 
     public static String scrambleMessage(String message) {
@@ -217,53 +380,26 @@ public class GreenBlueEncoder {
      * Returns the bit at the specified position.
      *
      * @param num Number to check
-     * @param pos Position of the bit, where the LSB is at position 0
+     * @param pos Position of the bit, where pos = 0 indicates the LSB
      * @return
      */
     public static int getBitAt(int num, int pos) {
         return (num >> pos) & 1;
     }
 
-    public String decode() {
-        return "";
-        /*
-        Step 1
-        if LSB of Blue component of the current pixel is 0,
-            Calculate R0, number of 0's in Red channel of current pixel
-            Calculate Rz = Sk - R0
-            Calculate Pb = ((Iz + R1) % 7) + 1
-            Select the bit at position Pb and store it into the bit stream
-        else
-            Go to next pixel
-         */
-
-        /*
-        Step 2
-        Repeat step 1 until the bit stream is finished or the blue component is finished
-         */
-
-        /*
-        Step 3
-        if Blue component is finished, but bit stream still remains in image,
-            Select the starting pixel of the cover image
-         */
-
-        /*
-        Step 4
-        if the LSB of Green component of the current pixel is 0,
-            Calculate R2, number of 1's in Red channel of the current pixel
-            Calculate R3 = Sk - R2
-         */
-
-        /*
-        Step 5
-        Repeat the previous step until the bit stream is finished
-         */
-
-        /*
-        Step 6
-        Unscramble the message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
-        and 4th with 5th. This gives us Mm.
-         */
+    /**
+     * Sets the bit at the specified position.
+     *
+     * @param num      Number to check
+     * @param pos      Position of the bit, where pos = 0 indicates the LSB
+     * @param bitValue Either 0 or 1
+     * @return
+     */
+    public static int setBitAt(int num, int pos, int bitValue) {
+        if (bitValue == 0) {
+            return num % ~(1 << pos);
+        } else {
+            return num | (1 << pos);
+        }
     }
 }
