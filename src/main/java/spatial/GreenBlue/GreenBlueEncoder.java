@@ -18,15 +18,15 @@ import java.util.Collections;
  */
 public class GreenBlueEncoder {
 
-    public static void encode(String inputImg, String outputImg, String origMessage, int secretKey)
-    throws IOException{
-        /* +
+    public static void encode(String inputImgDir, String outputImgDir, String origMessage,
+                              int secretKey) throws IOException{
+        /*
         Step 1
         Select Secret Key Sk
         Convert message into binary stream M
         */
 
-        /* +
+        /*
         Step 2
         Scramble original message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
@@ -35,13 +35,13 @@ public class GreenBlueEncoder {
 
         BitIterator bitMessage;
         try {
-            bitMessage = new BitIterator(scrambledMes);
+            bitMessage = new BitIterator(scrambledMes + BitIterator.END_DELIMITER);
 
         } catch (UnsupportedEncodingException e){
             throw new RuntimeException("Could not encode message: " + e.getMessage());
         }
 
-        BufferedImage image = ImageIO.read(new File(inputImg));
+        BufferedImage image = ImageIO.read(new File(inputImgDir));
         int imageHeight = image.getHeight();
         int imageWidth = image.getWidth();
         int imageSize = imageHeight * imageWidth;
@@ -50,8 +50,8 @@ public class GreenBlueEncoder {
         // fit in the Blue component
         boolean encodeGreen = true;
         encodingLoopBlue:
-        for (int y = 0; y < imageHeight; y ++) {
-            for (int x = 0; x < imageWidth; x ++) {
+        for (int y = 0; y < imageHeight; y++) {
+            for (int x = 0; x < imageWidth; x++) {
 
                 if (!bitMessage.hasNext()) {
                     // The message fit in the Blue component of the image, so
@@ -62,7 +62,7 @@ public class GreenBlueEncoder {
 
                 int pixelVal = image.getRGB(x,y);
 
-                /* +
+                /*
                 Step 3
                 Calculate R0, the number of 0's in the Red channel of the current pixel.
                 Calculate R1 = Sk - R0
@@ -71,7 +71,7 @@ public class GreenBlueEncoder {
                 int num0inRed = BitIterator.BITS_IN_A_BYTE - Integer.bitCount(redChannel);
                 int keyRed = secretKey - num0inRed;
 
-                /* +
+                /*
                 Step 4
                 Calculate position of bit in Blue channel Pb = ((Iz + R1) % 7) + 1
                  */
@@ -115,8 +115,8 @@ public class GreenBlueEncoder {
             Select the starting pixel of cover image
             */
             encodingLoopGreen:
-            for (int y = 0; y < imageHeight; y ++) {
-                for (int x = 0; x < imageWidth; x ++) {
+            for (int y = 0; y < imageHeight; y++) {
+                for (int x = 0; x < imageWidth; x++) {
 
                     if (!bitMessage.hasNext()) {
                         break encodingLoopGreen;
@@ -164,10 +164,19 @@ public class GreenBlueEncoder {
                 }
             }
         }
+
+        if (bitMessage.hasNext()) {
+            throw new RuntimeException("Could not fit message in image");
+        }
+
+
         /*
         Step 11
         Repeat steps 8 to 10 until the bit stream is finished
          */
+        // Write the image to a file
+//        File outputImageFile = new File(outputImgDir);
+//        ImageIO.write(image, "png", outputImageFile);
     }
 
     public String decode(String inputImage, int secretKey) throws IOException {
@@ -180,12 +189,12 @@ public class GreenBlueEncoder {
 
         String scrambledMessage = "";
 
-        // Green component of image is only decoded if the message delimeter has
+        // Green component of image is only decoded if the message delimiter has
         // not been reached while decoding the Blue component
         boolean decodeGreen = true;
 
         decodingLoopBlue:
-        for (int y = 0; y < image.getHeight(); y ++) {
+        for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
 
                 /*
@@ -227,7 +236,7 @@ public class GreenBlueEncoder {
             Select the starting pixel of the cover image
          */
         if (decodeGreen) {
-            for (int y = 0; y < image.getHeight(); y ++) {
+            for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
 
                 /*
@@ -283,7 +292,6 @@ public class GreenBlueEncoder {
     }
 
     public static String scrambleMessage(String message) {
-        message += BitIterator.END_DELIMITER;
         BitIterator bitMessage;
         try {
             bitMessage = new BitIterator(message);
@@ -332,8 +340,6 @@ public class GreenBlueEncoder {
             currentByte = GreenBlueEncoder.swapBits(currentByte, 3, 4);
             builder.append((char) currentByte);
         }
-        // Delete the decimeter character
-        builder.setLength(builder.length() - 1);
         return builder.toString();
     }
 

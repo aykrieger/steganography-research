@@ -16,7 +16,7 @@ public class GreenBlueEncoderTest {
     public void encode_decode_nominal() throws IOException {
         String inputImg = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImg = directories.outputImagesDir + "green_blue_output_1.png";
-        GreenBlueEncoder.encode(inputImg, outputImg, "Test_Message", 803572);
+        GreenBlueEncoder.encode(inputImg, outputImg, "", 803572);
     }
 
     @Test
