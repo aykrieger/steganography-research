@@ -2,6 +2,22 @@ Weekly Summary
 James Vaughn
 
 ------------------------------------------------------------------------------------
+Week 5: 2018-03-30
+Changes to the Gantt schedule:
+---
+
+Files changed:
+-src/main/java/frequency/DWT/DWTEncoder
+I have implemented part of the LSB encoder for the DWT for testing purposed.
+The encoder will now encode a message into the LSB of the coefficients of the HH band of the Blue color component.
+The decoder is able to attempt to decode the message.
+Right now, I am running into issues with doing type conversions, and the library we are using destroying the encoded data.
+I will need to either use a different library or figure out a way of encoding the data so that it doesnt get destroyed.
+
+Non-code work done:
+I spent a bit of time trying to see if there are any other libraries available to Java that do not have this issue.
+
+------------------------------------------------------------------------------------
 Week 4: 2018-03-21
 Changes to the Gantt schedule:
 ---
