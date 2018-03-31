@@ -20,6 +20,9 @@ public class GreenBlueEncoder {
 
     public static void encode(String inputImgDir, String outputImgDir, String origMessage,
                               int secretKey) throws IOException{
+        if (origMessage.isEmpty()) {
+            throw new IllegalArgumentException("Input message must not be empty");
+        }
         /*
         Step 1
         Select Secret Key Sk
@@ -36,7 +39,6 @@ public class GreenBlueEncoder {
         BitIterator bitMessage;
         try {
             bitMessage = new BitIterator(scrambledMes + BitIterator.END_DELIMITER);
-
         } catch (UnsupportedEncodingException e){
             throw new RuntimeException("Could not encode message: " + e.getMessage());
         }
@@ -54,7 +56,7 @@ public class GreenBlueEncoder {
             for (int x = 0; x < imageWidth; x++) {
 
                 if (!bitMessage.hasNext()) {
-                    // The message fit in the Blue component of the image, so
+                    // The message fits in the Blue component of the image, so
                     // we do not have to encode the Green component
                     encodeGreen = false;
                     break encodingLoopBlue;
@@ -94,10 +96,12 @@ public class GreenBlueEncoder {
                     // LSB position of Blue component is set to 0
                     // LSB of Blue component in pixel is at position 0
                     pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 0);
+                    int cat = 10;
                 } else {
                     // LSB position of Blue component is set to 1
                     // LSB of Blue component in pixel is at position 0
                     pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 1);
+                    int cat = 10;
                 }
                 image.setRGB(x, y, pixelVal);
             }
@@ -169,14 +173,14 @@ public class GreenBlueEncoder {
             throw new RuntimeException("Could not fit message in image");
         }
 
-
         /*
         Step 11
         Repeat steps 8 to 10 until the bit stream is finished
          */
+
         // Write the image to a file
-//        File outputImageFile = new File(outputImgDir);
-//        ImageIO.write(image, "png", outputImageFile);
+        File outputImageFile = new File(outputImgDir);
+        ImageIO.write(image, "png", outputImageFile);
     }
 
     public String decode(String inputImage, int secretKey) throws IOException {
@@ -292,6 +296,7 @@ public class GreenBlueEncoder {
     }
 
     public static String scrambleMessage(String message) {
+        message += BitIterator.END_DELIMITER;
         BitIterator bitMessage;
         try {
             bitMessage = new BitIterator(message);
