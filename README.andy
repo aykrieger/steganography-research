@@ -1,6 +1,12 @@
 Weekly Summary
 Andy Krieger
 
+## Week 5: 2018-03-24 to 2018-03-30
+
+I worked on debugging and testing the Green Blue encoding and decoding algorithms. This was more challenging than I expected and involved me working out many bit operations by hand to check my code.
+
+The files I worked on were `src/main/java/spatial/GreenBlue/GreenBlueEncoder.java` and `src/test/java/spatial.LSB/GreenBlueEncoderTest.java`.
+
 ## Week 4: 2018-03-17 to 2018-03-23
 
 I read another paper to better understand the encoding algorithm because some of the steps for the algorithm are not well-defined in the original paper. 

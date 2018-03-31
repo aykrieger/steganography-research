@@ -16,7 +16,9 @@ public class GreenBlueEncoderTest {
     public void encode_decode_nominal() throws IOException {
         String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
-        GreenBlueEncoder.encode(inputImgDir, outputImgDir, "A", 803572);
+        int secretKey = 803572;
+        GreenBlueEncoder.encode(inputImgDir, outputImgDir, "A", secretKey);
+        String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
     }
 
     @Test
@@ -53,16 +55,8 @@ public class GreenBlueEncoderTest {
 
     @Test
     public void unscrambleMessage_nominal() {
-        int[] input = {42, 166, 206, 46, 4, 178, 166, 206, 206, 134, 230, 166, 0};
-        String expected = "Test Message";
-        String result = GreenBlueEncoder.unscrambleMessage(input);
-        assertTrue(expected.equals(result));
-    }
-
-    @Test
-    public void unscrambleMessage_short() {
-        int[] input = {130};
-        String expected = "A";
+        String input = "*¦Î.\u0004²¦ÎÎ\u0086æ¦\u0000";
+        String expected = "Test Message\u0000";
         String result = GreenBlueEncoder.unscrambleMessage(input);
         assertTrue(expected.equals(result));
     }
