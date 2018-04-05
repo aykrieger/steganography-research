@@ -50,8 +50,8 @@ public class DiscreteSpringTransform {
         BufferedImage smallerOfSmaller = smaller.getSubimage(smallerBorder+1,0, (smaller.getWidth() - smallerBorder), smaller.getHeight());
 
         if (smallerBorder > 200){
-            breakImageUp(largerOfLarger, smallerOfLarger);
-            breakImageUp(largerOfSmaller,smallerOfSmaller );
+            larger = breakImageUp(largerOfLarger, smallerOfLarger);
+            smaller = breakImageUp(largerOfSmaller,smallerOfSmaller );
         }
 
         larger.getScaledInstance(((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)),smaller.getHeight(), Image.SCALE_SMOOTH);
