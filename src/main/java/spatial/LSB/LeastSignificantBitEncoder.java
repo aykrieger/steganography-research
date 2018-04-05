@@ -50,7 +50,7 @@ public class LeastSignificantBitEncoder {
 
                 image.setRGB(x, y, pixelColor);
 
-                if(bitMessage.hasNext() == false) {
+                if(!bitMessage.hasNext()) {
                     this.stegoImage = Optional.of(image);
                     return;
                 }

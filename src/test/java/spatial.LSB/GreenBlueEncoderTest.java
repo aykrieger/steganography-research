@@ -14,9 +14,11 @@ public class GreenBlueEncoderTest {
 
     @Test
     public void encode_decode_nominal() throws IOException {
-        String inputImg = directories.inputImagesDir + "green_blue_input_1.png";
-        String outputImg = directories.outputImagesDir + "green_blue_output_1.png";
-        GreenBlueEncoder.encode(inputImg, outputImg, "Test_Message", 803572);
+        String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
+        String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
+        int secretKey = 803572;
+        GreenBlueEncoder.encode(inputImgDir, outputImgDir, "A", secretKey);
+        String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
     }
 
     @Test
@@ -44,9 +46,17 @@ public class GreenBlueEncoderTest {
     }
 
     @Test
+    public void scrambleMessage_short() {
+        String inputMes = "A";
+        String expected = "\u0082\u0000";
+        String result = GreenBlueEncoder.scrambleMessage(inputMes);
+        assertTrue(expected.equals(result));
+    }
+
+    @Test
     public void unscrambleMessage_nominal() {
-        int[] input = {42, 166, 206, 46, 4, 178, 166, 206, 206, 134, 230, 166, 0};
-        String expected = "Test Message";
+        String input = "*¦Î.\u0004²¦ÎÎ\u0086æ¦\u0000";
+        String expected = "Test Message\u0000";
         String result = GreenBlueEncoder.unscrambleMessage(input);
         assertTrue(expected.equals(result));
     }
@@ -66,5 +76,19 @@ public class GreenBlueEncoderTest {
         int pos_1 = 2;
         int pos_2 = 7;
         assertEquals(419, GreenBlueEncoder.swapBits(input_num, pos_1, pos_2));
+    }
+
+    @Test
+    public void getBitAt_nominal1() {
+        int input_num = Integer.parseInt("0100100111", 2);
+        int input_pos = 0;
+        assertEquals(1, GreenBlueEncoder.getBitAt(input_num, input_pos));
+    }
+
+    @Test
+    public void getBitAt_nominal2() {
+        int input_num = Integer.parseInt("0100100111", 2);
+        int input_pos = 3;
+        assertEquals(0, GreenBlueEncoder.getBitAt(input_num, input_pos));
     }
 }
