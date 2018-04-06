@@ -1,10 +1,8 @@
 package warden.DST;
 
 import org.apache.commons.cli.*;
-import warden.RawQuickPair.RawQuickPair;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 public class Main {
     public static void main(String[] args) {
@@ -51,6 +49,6 @@ public class Main {
 
     private static void RunWarden(String inputFilePath, String outputFilePath) throws IOException {
         DiscreteSpringTransform warden = new DiscreteSpringTransform(inputFilePath);
-        warden.WriteImage(outputFilePath);
+        warden.writeImage(outputFilePath);
     }
 }

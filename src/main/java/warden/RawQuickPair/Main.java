@@ -15,19 +15,15 @@ public class Main {
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd;
 
-        // Commented this out because "parse(options, args)" is an unhandled exception
-        // and was giving me an error
-        /*
         try {
             cmd = parser.parse(options, args);
-        } catch (ParseException e) {
+        } catch (org.apache.commons.cli.ParseException e) {
             System.out.println(e.getMessage());
-            formatter.printHelp("RawQuickPair", options);
+            formatter.printHelp("Bit deletion warden", options);
 
             System.exit(1);
             return;
         }
-
 
         String inputFilePath = cmd.getOptionValue("input");
         String outputFilePath = cmd.getOptionValue("output");
@@ -38,7 +34,6 @@ public class Main {
             System.err.println(e.getMessage());
             System.exit(1);
         }
-        */
     }
 
     private static Options CreateCmdLineOptions() {
@@ -53,13 +48,11 @@ public class Main {
     }
 
     private static void RunWarden(String inputFilePath, String outputFilePath) throws IOException {
-        // Commented this out because the method ScrubImage was not found
-        /*
+        HelpFormatter formatter = new HelpFormatter();
         RawQuickPair warden = new RawQuickPair(inputFilePath);
-        warden.ScrubImage();
-        if (warden.WriteImage(outputFilePath)){
-            formatter.printHelp("Image has Steganography");
+        if (warden.isImageStegonagraphic()){
+            System.console().writer().println("Image has Stenography");
         }
-        */
+
     }
 }

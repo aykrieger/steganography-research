@@ -12,7 +12,8 @@ import java.util.Optional;
 public class RawQuickPair {
 
     private String imageFileName;
-    private byte[] pixelArray = new byte[2^21]; // it is of size 2^21 since that is all of the possible combinations of the first seven bytes of RGB
+    private int exponet = (int) Math.pow(2,24);
+    private byte[] pixelArray = new byte[exponet]; // it is of size 2^21 since that is all of the possible combinations of the first seven bytes of RGB
     private double ratio;
 
     public RawQuickPair(String imageFileName) {
@@ -32,9 +33,9 @@ public class RawQuickPair {
                 // Pixel
                 int pixelColor = image.getRGB(x, y);
                 // break up the pixel into the LSB and the other bits
-                int red = ((pixelColor & 0x00fe0000) >> 17);
-                int green = ((pixelColor & 0x0000fe00) >>9);
-                int blue = ((pixelColor& 0x000000fe) >> 1);
+                int red = ((pixelColor & 0x00fe0000) >> 2);
+                int green = ((pixelColor & 0x0000fe00) >> 1);
+                int blue = ((pixelColor & 0x000000fe));
                 int redLastBit = ((pixelColor & 0x00010000) >> 14);
                 int greenLastBit = ((pixelColor & 0x00000100) >> 7);
                 int blueLastBit = (pixelColor & 0x00000001) ;
@@ -43,18 +44,23 @@ public class RawQuickPair {
 
                 int leastSignificantBitIndex = redLastBit + greenLastBit + blueLastBit;
                 byte leastSignificantBits = pixelArray[index];
-                if ((leastSignificantBits & leastSignificantBitIndex) == 0)
-                    leastSignificantBits = (byte) ((leastSignificantBits & leastSignificantBitIndex) | 1);
+                    leastSignificantBits = (byte) ((leastSignificantBits  ) | (1) << leastSignificantBitIndex);
                 pixelArray[index] = leastSignificantBits;
             }
         }
     }
 
-    private double findRatio(){
+    public double findRatio(){
         int uniqueColors = 0;
         int closeColors =0;
+        int signedBit = 0;
         for (byte leastSignificantBits : pixelArray) {
-            int numberOfOnes = Integer.bitCount((int) leastSignificantBits);
+            if (leastSignificantBits < 0) {
+                signedBit = 1;
+                leastSignificantBits += 128;
+            }
+            int numberOfOnes = Integer.bitCount((int) leastSignificantBits) + signedBit;
+            signedBit = 0;
             if (numberOfOnes == 1)
                 uniqueColors++;
             else if (numberOfOnes > 1) {
@@ -64,6 +70,41 @@ public class RawQuickPair {
         }
         double ratio = closeColors / uniqueColors;
         return ratio;
+    }
+
+    public Integer findUniqueColors() throws IOException{
+        this.pixelArraySort();
+        int uniqueColors = 0;
+        int signedBit = 0;
+        for (byte leastSignificantBits : pixelArray) {
+            if (leastSignificantBits < 0) {
+                leastSignificantBits += 128;
+                signedBit = 1;
+            }
+            int numberOfOnes = Integer.bitCount((int) leastSignificantBits) + signedBit;
+            signedBit = 0;
+            if (numberOfOnes != 0)
+                uniqueColors += numberOfOnes;
+        }
+        return uniqueColors;
+    }
+
+    public Integer findCloseColors() throws IOException{
+        this.pixelArraySort();
+        int closeColors =0;
+        int signedBit = 0;
+        for (byte leastSignificantBits : pixelArray) {
+            if (leastSignificantBits < 0) {
+                signedBit = 1;
+                leastSignificantBits += 128;
+            }
+            int numberOfOnes = Integer.bitCount((int) leastSignificantBits) + signedBit;
+            signedBit = 0;
+            if (numberOfOnes > 1) {
+                closeColors += numberOfOnes;
+            }
+        }
+        return closeColors;
     }
 
     public boolean isImageStegonagraphic () throws IOException{
