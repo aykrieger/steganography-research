@@ -34,11 +34,11 @@ public class GreenBlueEncoder {
         Scramble original message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
          */
-        String scrambledMes = GreenBlueEncoder.scrambleMessage(origMessage);
+        //String scrambledMes = GreenBlueEncoder.scrambleMessage(origMessage);
 
         BitIterator bitMessage;
         try {
-            bitMessage = new BitIterator(scrambledMes + BitIterator.END_DELIMITER);
+            bitMessage = new BitIterator(origMessage + BitIterator.END_DELIMITER);
         } catch (UnsupportedEncodingException e){
             throw new RuntimeException("Could not encode message: " + e.getMessage());
         }
@@ -82,7 +82,7 @@ public class GreenBlueEncoder {
                 Calculate position of bit in Blue channel Pb = ((Iz + R1) % 7) + 1
                  */
                 int blueChannel = GreenBlueEncoder.getBlue(pixelVal);
-                int keyBlue = ((imageSize + keyRed) % 7) + 1;
+                int bluePos = ((imageSize + keyRed) % 7) + 1;
 
                 /*
                 Step 5
@@ -93,7 +93,7 @@ public class GreenBlueEncoder {
                     LSB position of Blue component is set to 1
                  */
 
-                int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, keyBlue);
+                int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, bluePos);
                 Byte nextBit = bitMessage.next();
 
                 if (bitAtKeyBlue == nextBit) {
@@ -146,7 +146,7 @@ public class GreenBlueEncoder {
                     Calculate the position of bit in Green channel Pg = ((Iz + R3) % 7) + 1
                      */
                     int greenChannel = GreenBlueEncoder.getGreen(pixelVal);
-                    int keyBlue = ((imageSize + keyRed) % 7) + 1;
+                    int greenPos = ((imageSize + keyRed) % 7) + 1;
 
                     /*
                     Step 10
@@ -156,7 +156,7 @@ public class GreenBlueEncoder {
                     else
                         LSB position of Green component is set to 1
                      */
-                    int bitAtKeyBlue = GreenBlueEncoder.getBitAt(greenChannel, keyBlue);
+                    int bitAtKeyBlue = GreenBlueEncoder.getBitAt(greenChannel, greenPos);
                     Byte nextBit = bitMessage.next();
 
                     if (bitAtKeyBlue == nextBit) {
@@ -220,8 +220,8 @@ public class GreenBlueEncoder {
                     int num0inRed = BitIterator.BITS_IN_A_BYTE - Integer.bitCount(redChannel);
                     int keyRed = secretKey - num0inRed;
 
-                    int keyBlue = ((imageSize + keyRed) % 7) + 1;
-                    int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, keyBlue);
+                    int bluePos = ((imageSize + keyRed) % 7) + 1;
+                    int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, bluePos);
                     // Reached the delimiter character
                     if (bitBuildRes.append((byte) bitAtKeyBlue)) {
                         decodeGreen = false;
@@ -292,8 +292,10 @@ public class GreenBlueEncoder {
         Unscramble the message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
          */
-        String unscrambledMes = GreenBlueEncoder.unscrambleMessage(bitBuildRes.toString());
-        return unscrambledMes;
+        //String unscrambledMes = GreenBlueEncoder.unscrambleMessage(bitBuildRes.toString());
+        //return unscrambledMes;
+
+        return bitBuildRes.toString();
     }
 
     public static String scrambleMessage(String message) {

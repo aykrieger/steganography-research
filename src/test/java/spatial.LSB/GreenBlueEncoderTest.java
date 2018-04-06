@@ -19,6 +19,7 @@ public class GreenBlueEncoderTest {
         int secretKey = 803572;
         GreenBlueEncoder.encode(inputImgDir, outputImgDir, "A", secretKey);
         String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
+        int cat = 5;
     }
 
     @Test
