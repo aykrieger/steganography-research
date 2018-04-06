@@ -11,12 +11,12 @@ public class DSTtest {
     @Test
     public void sixtyFourtyToFiftyFifty() throws IOException {
         DiscreteSpringTransform warden = new DiscreteSpringTransform("InputImages/sixtyFourty.png");
-        warden.writeImage("TestImage/DST");
+        warden.writeImage("TestImage/sixtyFourtyDST");
     }
 
     @Test
     public void distortion() throws IOException {
         DiscreteSpringTransform warden = new DiscreteSpringTransform("InputImages/dwt.png");
-        warden.writeImage("TestImage/dwt_dst");
+        warden.writeImage("OutputImages/dwtDST");
     }
 }

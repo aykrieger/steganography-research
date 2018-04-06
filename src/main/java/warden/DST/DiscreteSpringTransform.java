@@ -60,6 +60,6 @@ public class DiscreteSpringTransform {
 
     public void writeImage(String outputFilePath) throws IOException{
         File outputImageFile = new File(outputFilePath);
-        ImageIO.write(breakImageUp(), "png", outputImageFile);
+        ImageIO.write(breakImageUp(), ".png", outputImageFile);
     }
 }
