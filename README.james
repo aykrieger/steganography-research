@@ -2,6 +2,22 @@ Weekly Summary
 James Vaughn
 
 ------------------------------------------------------------------------------------
+Week 6: 2018-04-06
+Changes to the Gantt schedule:
+---
+
+Files changed:
+-src/main/java/frequency/DWT/DWTEncoder
+-src/main/java/frequency/DWT/HaarTransformer
+I have the encoder now completely able to encode and decode messages, however it is only being applied to the blue color component right now.
+The encoder just needs to have other color planes added and some minor refactoring done.
+I added haar transformer so I had full control over how the transformation and inverse transformation are performed,
+ as otherwise bit information would get wiped out during the encoding process. As such, I am no longer using the library from last week.
+
+Non-code work done:
+I spent quite a bit of time trying to figure out the math necessary to preserve bit information throughout the haar transform.
+
+------------------------------------------------------------------------------------
 Week 5: 2018-03-30
 Changes to the Gantt schedule:
 ---
