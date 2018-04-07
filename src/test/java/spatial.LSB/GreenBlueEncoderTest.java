@@ -10,16 +10,29 @@ import spatial.GreenBlue.GreenBlueEncoder;
 
 public class GreenBlueEncoderTest {
 
-    DirectoryConfigReader directories = new DirectoryConfigReader();
+    private DirectoryConfigReader directories = new DirectoryConfigReader();
 
     @Test
     public void encode_decode_nominal() throws IOException {
         String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
         int secretKey = 803572;
-        GreenBlueEncoder.encode(inputImgDir, outputImgDir, "A", secretKey);
+        String expected = "Test Message";
+        GreenBlueEncoder.encode(inputImgDir, outputImgDir, expected, secretKey);
         String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
-        int cat = 5;
+        assertTrue(result.equals(expected));
+    }
+
+    @Test
+    public void encode_decode_short() throws IOException {
+        // For some reason there is a bug in the scrambling code, TODO continue on this
+        String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
+        String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
+        int secretKey = 803572;
+        String expected = "ABC";
+        GreenBlueEncoder.encode(inputImgDir, outputImgDir, expected, secretKey);
+        String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
+        assertTrue(result.equals(expected));
     }
 
     @Test
@@ -57,9 +70,17 @@ public class GreenBlueEncoderTest {
     @Test
     public void unscrambleMessage_nominal() {
         String input = "*¦Î.\u0004²¦ÎÎ\u0086æ¦\u0000";
-        String expected = "Test Message\u0000";
+        String expected = "Test Message";
         String result = GreenBlueEncoder.unscrambleMessage(input);
         assertTrue(expected.equals(result));
+    }
+
+    @Test
+    public void scrambleUnscrambleMessage_nominal() {
+        String expected = "Custom message for testing";
+        String scrambled = GreenBlueEncoder.scrambleMessage(expected);
+        String unscrambled = GreenBlueEncoder.unscrambleMessage(scrambled);
+        assertTrue(unscrambled.equals(expected));
     }
 
     @Test

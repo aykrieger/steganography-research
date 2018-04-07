@@ -34,11 +34,11 @@ public class GreenBlueEncoder {
         Scramble original message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
          */
-        //String scrambledMes = GreenBlueEncoder.scrambleMessage(origMessage);
+        String scrambledMes = GreenBlueEncoder.scrambleMessage(origMessage);
 
         BitIterator bitMessage;
         try {
-            bitMessage = new BitIterator(origMessage + BitIterator.END_DELIMITER);
+            bitMessage = new BitIterator(scrambledMes);
         } catch (UnsupportedEncodingException e){
             throw new RuntimeException("Could not encode message: " + e.getMessage());
         }
@@ -51,9 +51,6 @@ public class GreenBlueEncoder {
         // Green component of image is only encoded if the message cannot
         // fit in the Blue component
         boolean encodeGreen = true;
-
-        int xMax = 0;
-        int yMax = 0;
 
         encodingLoopBlue:
         for (int y = 0; y < imageHeight; y++) {
@@ -106,8 +103,6 @@ public class GreenBlueEncoder {
                     pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 1);
                 }
                 image.setRGB(x, y, pixelVal);
-                xMax = x;
-                yMax = y;
             }
         }
 
@@ -214,16 +209,28 @@ public class GreenBlueEncoder {
                     Go to next pixel
                  */
                 int pixelVal = image.getRGB(x, y);
-                int blueChannel = GreenBlueEncoder.getBlue(pixelVal);
-                if (0 == GreenBlueEncoder.getBitAt(blueChannel, 0)) {
-                    int redChannel = GreenBlueEncoder.getRed(pixelVal);
-                    int num0inRed = BitIterator.BITS_IN_A_BYTE - Integer.bitCount(redChannel);
-                    int keyRed = secretKey - num0inRed;
+                int redChannel = GreenBlueEncoder.getRed(pixelVal);
+                int num0inRed = BitIterator.BITS_IN_A_BYTE - Integer.bitCount(redChannel);
+                int keyRed = secretKey - num0inRed;
 
-                    int bluePos = ((imageSize + keyRed) % 7) + 1;
-                    int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, bluePos);
-                    // Reached the delimiter character
-                    if (bitBuildRes.append((byte) bitAtKeyBlue)) {
+                int blueChannel = GreenBlueEncoder.getBlue(pixelVal);
+                int bitAtBlueLSB = GreenBlueEncoder.getBitAt(blueChannel, 0);
+
+                int bluePos = ((imageSize + keyRed) % 7) + 1;
+                int bitAtBluePos = GreenBlueEncoder.getBitAt(blueChannel, bluePos);
+                // We know the original message bit is the same as the bit at the Blue Position
+                // in the Blue Channel
+                if (bitAtBlueLSB == 0) {
+                    if (bitBuildRes.append((byte) bitAtBluePos)) {
+                        // Reached the delimiter character
+                        decodeGreen = false;
+                        break decodingLoopBlue;
+                    }
+                // We know the original message bit is the same as the bit at the Blue Position
+                // in the Blue Channel
+                } else {
+                    if (bitBuildRes.append((byte) (bitAtBluePos ^ 1))) {
+                        // Reached the delimiter character
                         decodeGreen = false;
                         break decodingLoopBlue;
                     }
@@ -272,9 +279,9 @@ public class GreenBlueEncoder {
                         int num1inRed = Integer.bitCount(redChannel);
                         int keyRed = secretKey - num1inRed;
 
-                        int keyGreen = ((imageSize + keyRed) % 7) + 1;
-                        int bitAtKeyBlue = GreenBlueEncoder.getBitAt(greenChannel, keyGreen);
-                        if (bitBuildRes.append((byte) bitAtKeyBlue)) {
+                        int greenPos = ((imageSize + keyRed) % 7) + 1;
+                        int bitAtGreenPos = GreenBlueEncoder.getBitAt(greenChannel, greenPos);
+                        if (bitBuildRes.append((byte) bitAtGreenPos)) {
                             break decodingLoopGreen;
                         }
                     }
@@ -282,24 +289,24 @@ public class GreenBlueEncoder {
             }
         }
 
+
         /*
         Step 5
         Repeat the previous step until the bit stream is finished
          */
 
+        String scrambledMessage = bitBuildRes.toString();
+        // Remove delimiter character
+        scrambledMessage = scrambledMessage.substring(0, scrambledMessage.length() - 1);
         /*
         Step 6
         Unscramble the message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
          */
-        //String unscrambledMes = GreenBlueEncoder.unscrambleMessage(bitBuildRes.toString());
-        //return unscrambledMes;
-
-        return bitBuildRes.toString();
+        return GreenBlueEncoder.unscrambleMessage(scrambledMessage);
     }
 
     public static String scrambleMessage(String message) {
-        message += BitIterator.END_DELIMITER;
         BitIterator bitMessage;
         try {
             bitMessage = new BitIterator(message);
@@ -347,7 +354,8 @@ public class GreenBlueEncoder {
             currentByte = GreenBlueEncoder.swapBits(currentByte, 3, 4);
             builder.append((char) currentByte);
         }
-        return builder.toString();
+        String mesWithDelimiter = builder.toString();
+        return mesWithDelimiter.substring(0, mesWithDelimiter.length() - 1);
     }
 
     /**
