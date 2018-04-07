@@ -1,5 +1,10 @@
 Weekly Summary
 Robert Milne
+
+Week 5: 2018-04-06
+wroked on creating test files for DST and Rawquickpair and cleaned up their main files. 
+files changed: \steganography-research\src\test\java\warden\DSTtest, \steganography-research\src\test\java\warden\rawquickpairTest
+
 Week 4: 2018-23-08
 worked on DST and create the main file and the actuall algorithm. 
 files changed: steganography-research/src/main/java/warden/DST/DescriteSpringTransform.java, steganography-research/src/main/java/warden/DST/Main.java
