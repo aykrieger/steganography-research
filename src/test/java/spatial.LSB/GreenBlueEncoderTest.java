@@ -13,12 +13,24 @@ public class GreenBlueEncoderTest {
     private DirectoryConfigReader directories = new DirectoryConfigReader();
 
     @Test
-    public void encode_decode_nominal() throws IOException {
+    public void encode_decode_nominal1() throws IOException {
         String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
-        int secretKey = 803572;
+        int secretKey = 27353474;
         String input = "Test Message";
         String expected = "Test Message";
+        GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
+        String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
+        assertTrue(result.equals(expected));
+    }
+
+    @Test
+    public void encode_decode_nominal2() throws IOException {
+        String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
+        String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
+        int secretKey = 5354363;
+        String input = "Garbage Characters: {)(*jk2&fjs98j2rgdsg32j2@#2j15sd(*kjd9";
+        String expected = "Garbage Characters: {)(*jk2&fjs98j2rgdsg32j2@#2j15sd(*kjd9";
         GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
         String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
         assertTrue(result.equals(expected));
@@ -28,7 +40,7 @@ public class GreenBlueEncoderTest {
     public void encode_decode_short() throws IOException {
         String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
-        int secretKey = 175182;
+        int secretKey = 1;
         String input = "A";
         String expected = "A";
         GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
