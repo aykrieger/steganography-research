@@ -3,10 +3,12 @@ Andy Krieger
 
 ## Week 7: 2018-04-06 to 2018-04-13
 
-I created some tests for the BitBuilder and BitIterator classes so I could confirm they're working as expected.
+I created some tests for the BitBuilder and BitIterator classes so I could confirm they're working as expected. I also had to fix some hard to find bugs in the BitIterator and BitBuilder classes because there were issues converting between bytes and ASCII characters, signed bytes to bits, etc.
 
 Files I worked on:
 - `src/main/java/spatial/GreenBlue/GreenBlueEncoder.java`
+- `src/main/java/lib/BitIterator.java`
+- `src/main/java/lib/BitBuilder.java`
 - `src/test/java/spatial.LSB/GreenBlueEncoderTest.java`
 - `src/test/java/lib/BitIteratorAndBuilderTest.java`
 

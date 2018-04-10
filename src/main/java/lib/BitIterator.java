@@ -19,11 +19,11 @@ public class BitIterator implements Iterator {
     public BitIterator(String message) throws UnsupportedEncodingException {
         this.message = new ArrayList<Byte>();
 
-        for(byte b : message.getBytes("ASCII")) {
-            this.message.add(b);
+        for (char c : message.toCharArray()) {
+            this.message.add((byte) c);
         }
 
-        if(this.message.size() > 0) {
+        if (this.message.size() > 0) {
             this.currentByte = this.message.remove(0);
         }
     }

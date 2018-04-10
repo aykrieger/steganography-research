@@ -26,10 +26,9 @@ public class GreenBlueEncoderTest {
 
     @Test
     public void encode_decode_short() throws IOException {
-        // For some reason there is a bug in the scrambling code, TODO continue on this
         String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
-        int secretKey = 1;
+        int secretKey = 175182;
         String input = "A";
         String expected = "A";
         GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
@@ -80,6 +79,14 @@ public class GreenBlueEncoderTest {
     @Test
     public void scrambleUnscrambleMessage_nominal() {
         String expected = "Custom message for testing";
+        String scrambled = GreenBlueEncoder.scrambleMessage(expected);
+        String unscrambled = GreenBlueEncoder.unscrambleMessage(scrambled);
+        assertTrue(unscrambled.equals(expected));
+    }
+
+    @Test
+    public void scrambleUnscrambleMessage_8bitChars() {
+        String expected = "\u0082\u0000";
         String scrambled = GreenBlueEncoder.scrambleMessage(expected);
         String unscrambled = GreenBlueEncoder.unscrambleMessage(scrambled);
         assertTrue(unscrambled.equals(expected));
