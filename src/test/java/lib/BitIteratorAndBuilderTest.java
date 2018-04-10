@@ -14,8 +14,8 @@ public class BitIteratorAndBuilderTest {
 
     @Test
     public void create_and_print_nominal() throws IOException {
-        String expected = "A";
-        String message = "A" + BitIterator.END_DELIMITER;
+        String expected = "AB";
+        String message = "AB" + BitIterator.END_DELIMITER;
 
         BitIterator bitMessage;
         try {

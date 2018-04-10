@@ -29,7 +29,7 @@ public class GreenBlueEncoderTest {
         // For some reason there is a bug in the scrambling code, TODO continue on this
         String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
-        int secretKey = 281047;
+        int secretKey = 1;
         String input = "A";
         String expected = "A";
         GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);

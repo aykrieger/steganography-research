@@ -58,6 +58,28 @@ public class GreenBlueEncoder {
             for (int x = 0; x < imageWidth; x++) {
 
                 if (!bitMessage.hasNext()) {
+                    // Encode the next pixel to zero to ensure the whole
+                    // delimiter character is encoded in the image
+                    int pixelVal = image.getRGB(x,y);
+                    int redChannel = GreenBlueEncoder.getRed(pixelVal);
+                    int num0inRed = BitIterator.BITS_IN_A_BYTE - Integer.bitCount(redChannel);
+                    int keyRed = secretKey - num0inRed;
+                    int blueChannel = GreenBlueEncoder.getBlue(pixelVal);
+                    int bluePos = ((imageSize + keyRed) % 7) + 1;
+                    int bitAtKeyBlue = GreenBlueEncoder.getBitAt(blueChannel, bluePos);
+                    // The last bit of the delimiter character is 0, so encode 0 to this pixel
+                    Byte nextBit = 0;
+                    if (bitAtKeyBlue == nextBit) {
+                        // LSB position of Blue component is set to 0
+                        // LSB of Blue component in pixel is at position 0
+                        pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 0);
+                    } else {
+                        // LSB position of Blue component is set to 1
+                        // LSB of Blue component in pixel is at position 0
+                        pixelVal = GreenBlueEncoder.setBitAt(pixelVal, 0, 1);
+                    }
+                    image.setRGB(x, y, pixelVal);
+
                     // The message fits in the Blue component of the image, so
                     // we do not have to encode the Green component
                     encodeGreen = false;
@@ -231,6 +253,7 @@ public class GreenBlueEncoder {
                 // in the Blue Channel
                 } else {
                     if (bitBuildRes.append((byte) (bitAtBluePos ^ 1))) {
+                        int tempBit = bitAtBluePos ^ 1;
                         // Reached the delimiter character
                         decodeGreen = false;
                         break decodingLoopBlue;
