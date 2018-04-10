@@ -30,7 +30,12 @@ public class BitIterator implements Iterator {
 
     @Override
     public boolean hasNext() {
-        return (message.isEmpty() == false) || bitsIteratedInByte < 7;
+        // Original
+        //return (message.isEmpty() == false) || bitsIteratedInByte < 7;
+        boolean messageIsEmpty = message.isEmpty();
+        boolean iteratedLessThan7bits = bitsIteratedInByte < 7;
+        boolean answer = (!messageIsEmpty) || iteratedLessThan7bits;
+        return answer;
     }
 
     //Returns the next bit in the message

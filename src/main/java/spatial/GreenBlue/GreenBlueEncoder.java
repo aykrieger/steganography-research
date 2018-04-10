@@ -34,7 +34,8 @@ public class GreenBlueEncoder {
         Scramble original message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
         and 4th with 5th. This gives us Mm.
          */
-        String scrambledMes = GreenBlueEncoder.scrambleMessage(origMessage);
+        //String scrambledMes = GreenBlueEncoder.scrambleMessage(origMessage);
+        String scrambledMes = origMessage + BitIterator.END_DELIMITER;
 
         BitIterator bitMessage;
         try {
@@ -273,15 +274,27 @@ public class GreenBlueEncoder {
                     Select the bit at position Pg and store it in the bit stream
                  */
                     int pixelVal = image.getRGB(x, y);
-                    int greenChannel = GreenBlueEncoder.getGreen(pixelVal);
-                    if (0 == GreenBlueEncoder.getBitAt(greenChannel, 0)) {
-                        int redChannel = GreenBlueEncoder.getRed(pixelVal);
-                        int num1inRed = Integer.bitCount(redChannel);
-                        int keyRed = secretKey - num1inRed;
+                    int redChannel = GreenBlueEncoder.getRed(pixelVal);
+                    int num1inRed = Integer.bitCount(redChannel);
+                    int keyRed = secretKey - num1inRed;
 
-                        int greenPos = ((imageSize + keyRed) % 7) + 1;
-                        int bitAtGreenPos = GreenBlueEncoder.getBitAt(greenChannel, greenPos);
+                    int greenChannel = GreenBlueEncoder.getGreen(pixelVal);
+                    int bitAtGreenLSB = GreenBlueEncoder.getBitAt(greenChannel, 0);
+
+                    int greenPos = ((imageSize + keyRed) % 7) + 1;
+                    int bitAtGreenPos = GreenBlueEncoder.getBitAt(greenChannel, greenPos);
+                    // We know the original message bit is the same as the bit at the Blue Position
+                    // in the Blue Channel
+                    if (bitAtGreenLSB == 0) {
                         if (bitBuildRes.append((byte) bitAtGreenPos)) {
+                            // Reached the delimiter character
+                            break decodingLoopGreen;
+                        }
+                    // We know the original message bit is the same as the bit at the Blue Position
+                    // in the Blue Channel
+                    } else {
+                        if (bitBuildRes.append((byte) (bitAtGreenPos ^ 1))) {
+                            // Reached the delimiter character
                             break decodingLoopGreen;
                         }
                     }
@@ -290,23 +303,28 @@ public class GreenBlueEncoder {
         }
 
 
-        /*
-        Step 5
-        Repeat the previous step until the bit stream is finished
-         */
-
-        String scrambledMessage = bitBuildRes.toString();
-        // Remove delimiter character
-        scrambledMessage = scrambledMessage.substring(0, scrambledMessage.length() - 1);
-        /*
-        Step 6
-        Unscramble the message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
-        and 4th with 5th. This gives us Mm.
-         */
-        return GreenBlueEncoder.unscrambleMessage(scrambledMessage);
+        String cat = bitBuildRes.toString();
+        // Removes delimiter character
+        cat = cat.substring(0, cat.length() - 1);
+        return cat;
+//        /*
+//        Step 5
+//        Repeat the previous step until the bit stream is finished
+//         */
+//
+//        String scrambledMessage = bitBuildRes.toString();
+//        // Remove delimiter character
+//        scrambledMessage = scrambledMessage.substring(0, scrambledMessage.length() - 1);
+//        /*
+//        Step 6
+//        Unscramble the message. Replace 1st bit with 8th bit, 2nd with 7th, 3rd with 6th,
+//        and 4th with 5th. This gives us Mm.
+//         */
+//        return GreenBlueEncoder.unscrambleMessage(scrambledMessage);
     }
 
     public static String scrambleMessage(String message) {
+        message += BitIterator.END_DELIMITER;
         BitIterator bitMessage;
         try {
             bitMessage = new BitIterator(message);

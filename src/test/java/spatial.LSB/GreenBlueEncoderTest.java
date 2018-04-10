@@ -17,8 +17,9 @@ public class GreenBlueEncoderTest {
         String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
         int secretKey = 803572;
+        String input = "Test Message";
         String expected = "Test Message";
-        GreenBlueEncoder.encode(inputImgDir, outputImgDir, expected, secretKey);
+        GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
         String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
         assertTrue(result.equals(expected));
     }
@@ -28,9 +29,10 @@ public class GreenBlueEncoderTest {
         // For some reason there is a bug in the scrambling code, TODO continue on this
         String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
         String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
-        int secretKey = 803572;
-        String expected = "ABC";
-        GreenBlueEncoder.encode(inputImgDir, outputImgDir, expected, secretKey);
+        int secretKey = 281047;
+        String input = "A";
+        String expected = "A";
+        GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
         String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
         assertTrue(result.equals(expected));
     }

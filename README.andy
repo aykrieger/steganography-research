@@ -1,6 +1,15 @@
 Weekly Summary
 Andy Krieger
 
+## Week 7: 2018-04-06 to 2018-04-13
+
+I created some tests for the BitBuilder and BitIterator classes so I could confirm they're working as expected.
+
+Files I worked on:
+- `src/main/java/spatial/GreenBlue/GreenBlueEncoder.java`
+- `src/test/java/spatial.LSB/GreenBlueEncoderTest.java`
+- `src/test/java/lib/BitIteratorAndBuilderTest.java`
+
 ## Week 6: 2018-03-30 to 2018-04-06
 
 I continued testing the Green Blue encoding and decoding algorithms. I was able to confirm encoding, decoding, and message scrambling work, but I can't seem to combine the scrambling with the encoding and decoding algorithms. I'll have to continue to work on that.
