@@ -1,14 +1,11 @@
 package lib;
 
-import lib.DirectoryConfigReader;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-
-import lib.BitIterator;
 
 public class BitIteratorAndBuilderTest {
 

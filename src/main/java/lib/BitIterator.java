@@ -15,6 +15,7 @@ public class BitIterator implements Iterator {
     private int bitsIteratedInByte = 0;
     public static final int BITS_IN_A_BYTE = 8;
     public static final char END_DELIMITER = '\0';
+    public int bytesIterated;
 
     public BitIterator(String message) throws UnsupportedEncodingException {
         this.message = new ArrayList<Byte>();
@@ -45,6 +46,7 @@ public class BitIterator implements Iterator {
         if (bitsIteratedInByte >= BITS_IN_A_BYTE) {
             currentByte = message.remove(0);
             bitsIteratedInByte = 0;
+            bytesIterated++;
         }
 
         return (byte) b;

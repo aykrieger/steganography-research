@@ -60,7 +60,6 @@ public class GreenBlueEncoder {
             }
         }
 
-
         if (encodeGreen) {
             encodingLoopGreen:
             for (int y = 0; y < imageHeight; y++) {

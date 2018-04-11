@@ -1,6 +1,6 @@
 package spatial.LSB;
 
-import lib.DirectoryConfigReader;
+import lib.TestingLib;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,42 +10,54 @@ import spatial.GreenBlue.GreenBlueEncoder;
 
 public class GreenBlueEncoderTest {
 
-    private DirectoryConfigReader directories = new DirectoryConfigReader();
+    private TestingLib testingLib = new TestingLib();
 
     @Test
-    public void encode_decode_nominal1() throws IOException {
-        String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
-        String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
+    public void encodeDecode_nominal1() throws IOException {
+        String inputImgPath = testingLib.inputImagesDir + "green_blue_input_1.png";
+        String outputImgPath = testingLib.outputImagesDir + "green_blue_output_1.png";
         int secretKey = 27353474;
         String input = "Test Message";
         String expected = "Test Message";
-        GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
-        String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
+        GreenBlueEncoder.encode(inputImgPath, outputImgPath, input, secretKey);
+        String result = GreenBlueEncoder.decode(outputImgPath, secretKey);
         assertTrue(result.equals(expected));
     }
 
     @Test
-    public void encode_decode_nominal2() throws IOException {
-        String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
-        String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
+    public void encodeDecode_nominal2() throws IOException {
+        String inputImgPath = testingLib.inputImagesDir + "green_blue_input_1.png";
+        String outputImgPath = testingLib.outputImagesDir + "green_blue_output_1.png";
         int secretKey = 5354363;
         String input = "Garbage Characters: {)(*jk2&fjs98j2rgdsg32j2@#2j15sd(*kjd9";
         String expected = "Garbage Characters: {)(*jk2&fjs98j2rgdsg32j2@#2j15sd(*kjd9";
-        GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
-        String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
+        GreenBlueEncoder.encode(inputImgPath, outputImgPath, input, secretKey);
+        String result = GreenBlueEncoder.decode(outputImgPath, secretKey);
         assertTrue(result.equals(expected));
     }
 
     @Test
     public void encode_decode_short() throws IOException {
-        String inputImgDir = directories.inputImagesDir + "green_blue_input_1.png";
-        String outputImgDir = directories.outputImagesDir + "green_blue_output_1.png";
-        int secretKey = 1;
+        String inputImgPath = testingLib.inputImagesDir + "green_blue_input_1.png";
+        String outputImgPath = testingLib.outputImagesDir + "green_blue_output_1.png";
+        int secretKey = 725256;
         String input = "A";
         String expected = "A";
-        GreenBlueEncoder.encode(inputImgDir, outputImgDir, input, secretKey);
-        String result = GreenBlueEncoder.decode(outputImgDir, secretKey);
+        GreenBlueEncoder.encode(inputImgPath, outputImgPath, input, secretKey);
+        String result = GreenBlueEncoder.decode(outputImgPath, secretKey);
         assertTrue(result.equals(expected));
+    }
+
+    @Test
+    public void encodeDecode_largeMessage() throws IOException {
+        String inputImgPath = testingLib.inputImagesDir + "green_blue_input_1.png";
+        String outputImgPath = testingLib.outputImagesDir + "green_blue_output_1.png";
+        String inputMesPath = testingLib.inputMessagesDr + "1984 reduced-size.txt";
+        String input = testingLib.readTextFile(inputMesPath);
+        int secretKey = 135498;
+        GreenBlueEncoder.encode(inputImgPath, outputImgPath, input, secretKey);
+        String result = GreenBlueEncoder.decode(outputImgPath, secretKey);
+        assertTrue(result.equals(input));
     }
 
     @Test
@@ -105,7 +117,7 @@ public class GreenBlueEncoderTest {
     }
 
     @Test
-    public void swapBits_bits_are_the_same() {
+    public void swapBits_bitsAreTheSame() {
         int input_num = Integer.parseInt("0100100111", 2); // decimal value is 295
         int pos_1 = 0;
         int pos_2 = 2;
@@ -114,7 +126,7 @@ public class GreenBlueEncoderTest {
     }
 
     @Test
-    public void swapBits_bits_are_different() {
+    public void swapBits_bitsAreDifferent() {
         int input_num = Integer.parseInt("0100100111", 2); // decimal value is 295
         int pos_1 = 2;
         int pos_2 = 7;
