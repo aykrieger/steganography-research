@@ -1,6 +1,25 @@
 Weekly Summary
 Andy Krieger
 
+## Week 7: 2018-04-06 to 2018-04-13
+
+I created some tests for the BitBuilder and BitIterator classes so I could confirm they're working as expected. I also had to fix some hard to find bugs in the BitIterator and BitBuilder classes because there were issues converting between bytes and ASCII characters, signed bytes to bits, etc. Lastly, I finished the Green Blue encoding and decoding algorithms and thoroughly tested them.
+
+Files I worked on:
+- `src/main/java/spatial/GreenBlue/GreenBlueEncoder.java`
+- `src/main/java/lib/BitIterator.java`
+- `src/main/java/lib/BitBuilder.java`
+- `src/test/java/spatial.LSB/GreenBlueEncoderTest.java`
+- `src/test/java/lib/BitIteratorAndBuilderTest.java`
+
+## Week 6: 2018-03-30 to 2018-04-06
+
+I continued testing the Green Blue encoding and decoding algorithms. I was able to confirm encoding, decoding, and message scrambling work, but I can't seem to combine the scrambling with the encoding and decoding algorithms. I'll have to continue to work on that.
+
+I also read papers on the algorithms we are going to implement next. I read Steganography: DCT Coefficient (https://pdfs.semanticscholar.org/846a/0b3bbaf8b1f21aa94e638fa0e4b89842d2aa.pdf) for the DCT technique and A Modified Side Match Scheme (https://pdfs.semanticscholar.org/3ea3/5c93462c3be0b3284cddc419166507abc664.pdf) for the Side Match Scheme technique.
+
+The files I worked on were `src/main/java/spatial/GreenBlue/GreenBlueEncoder.java` and `src/test/java/spatial.LSB/GreenBlueEncoderTest.java`.
+
 ## Week 5: 2018-03-24 to 2018-03-30
 
 I worked on debugging and testing the Green Blue encoding and decoding algorithms. This was more challenging than I expected and involved me working out many bit operations by hand to check my code.

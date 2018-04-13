@@ -15,25 +15,23 @@ public class BitIterator implements Iterator {
     private int bitsIteratedInByte = 0;
     public static final int BITS_IN_A_BYTE = 8;
     public static final char END_DELIMITER = '\0';
+    public int bytesIterated;
 
     public BitIterator(String message) throws UnsupportedEncodingException {
         this.message = new ArrayList<Byte>();
 
-        for(byte b : message.getBytes("ASCII")) {
-            this.message.add(b);
+        for (char c : message.toCharArray()) {
+            this.message.add((byte) c);
         }
 
-        if(this.message.size() > 0) {
+        if (this.message.size() > 0) {
             this.currentByte = this.message.remove(0);
         }
     }
 
     @Override
     public boolean hasNext() {
-        boolean messageNotEmpty = message.isEmpty();
-        boolean bitsLessThan7 = bitsIteratedInByte < 7;
-        boolean result = messageNotEmpty || bitsLessThan7;
-        return message.isEmpty() == false || bitsIteratedInByte < 7;
+        return !message.isEmpty() || (bitsIteratedInByte < 7);
     }
 
     //Returns the next bit in the message
@@ -48,6 +46,7 @@ public class BitIterator implements Iterator {
         if (bitsIteratedInByte >= BITS_IN_A_BYTE) {
             currentByte = message.remove(0);
             bitsIteratedInByte = 0;
+            bytesIterated++;
         }
 
         return (byte) b;

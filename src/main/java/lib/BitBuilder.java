@@ -30,15 +30,15 @@ public class BitBuilder {
 
         // if the byte has been fully formed
         if (bitsUsedInCurrentByte >= BITS_IN_A_BYTE) {
-            // add the built character to the message string and reset all the values
-            builder.append((char)currentByte.byteValue());
+
+            int unsignedByteValue = currentByte & 0xFF;
+            builder.append((char) unsignedByteValue);
             bitsUsedInCurrentByte = 0;
 
             // check if the end has been reached
             if (currentByte == BitIterator.END_DELIMITER) {
                 return true;
             }
-
             currentByte = 0x00;
         }
 

@@ -2,6 +2,19 @@ Weekly Summary
 James Vaughn
 
 ------------------------------------------------------------------------------------
+Week 7: 2018-04-13
+Changes to the Gantt schedule:
+Spent a bit longer of DWT than expected, so other responsibilities are being pushed back a week
+
+Files changed:
+-src/main/java/frequency/DWT/DWTEncoder
+I added logic to encode message bits into different color planes if the message is too long for just one color to hold the info.
+The DWT encoder can now encode in all three color planes. It is now completely done.
+
+Non-code work done:
+I spent some time manually verifying the correctness of the encoder and its output stego images
+
+------------------------------------------------------------------------------------
 Week 6: 2018-04-06
 Changes to the Gantt schedule:
 ---
