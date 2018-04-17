@@ -14,17 +14,16 @@ public class DiscreteSpringTransform {
     or use the pinch attack which is a form of DST which is where you split the image into a area which is compressed and an area which is expanded.
 
      */
-    private String imageFileName;
+    private BufferedImage image;
 
-    public DiscreteSpringTransform(String imageFileName) {
-        this.imageFileName = imageFileName;
+    public DiscreteSpringTransform(String imageFileName) throws IOException {
+        this.image = ImageIO.read(new File(imageFileName));
     }
 
     private BufferedImage breakImageUp() throws IOException {
-        BufferedImage image = ImageIO.read(new File(this.imageFileName));
-         int border = (int) (image.getWidth() * 0.6);
-         BufferedImage larger = image.getSubimage(0,0, border, image.getHeight());
-         BufferedImage smaller = image.getSubimage(border+1,0, (image.getWidth() - border-1), image.getHeight());
+         int border = (int) (this.image.getWidth() * 0.6);
+         BufferedImage larger = this.image.getSubimage(0,0, border, this.image.getHeight());
+         BufferedImage smaller = this.image.getSubimage(border+1,0, (this.image.getWidth() - border-1), this.image.getHeight());
          if (border > 100){
            breakImageUp(larger, smaller );
         }
@@ -59,7 +58,8 @@ public class DiscreteSpringTransform {
     }
 
     public void writeImage(String outputFilePath) throws IOException{
+        BufferedImage changedImage = breakImageUp();
         File outputImageFile = new File(outputFilePath);
-        ImageIO.write(breakImageUp(), ".png", outputImageFile);
+        ImageIO.write(changedImage, "png", outputImageFile);
     }
 }
