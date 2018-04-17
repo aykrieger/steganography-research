@@ -14,6 +14,15 @@ public class TestingLib {
 
     final String directoryConfigFilename = "config/directory_config.txt";
 
+    /*
+    To set up this class, create a folder named "config" in this repository and save the
+    "directory_config.txt" file inside. Here is an example of a directory_config.txt file:
+
+    InputImages_Directory=/home/user/steganography-research/testImagesInput/
+    OutputImages_Directory=/home/user/steganography-research/testImagesOutput/
+    InputMessages_Directory=/home/user/steganography-research/testMessages/
+    */
+
     public TestingLib() {
         try (Stream<String> stream = Files.lines(Paths.get(directoryConfigFilename))) {
 
