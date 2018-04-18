@@ -2,6 +2,21 @@ Weekly Summary
 James Vaughn
 
 ------------------------------------------------------------------------------------
+Week 7: 2018-04-18
+Changes to the Gantt schedule:
+
+Files changed:
+-src/main/java/frequency/DFT/DFTEncoder
+-src/main/java/frequency/DFT/Main
+I added the basic logic for encoding a message into an image and decoding from an image using DFT.
+I have the application set up, so that we can run the encoder from the command line.
+The encoder is currently set up to work on the blue color component only, but it is easy to convert into all color components
+
+Non-code work done:
+I spent a lot of time with Andy finding and understanding a paper on DFT in order to make the encoder.
+
+
+------------------------------------------------------------------------------------
 Week 7: 2018-04-13
 Changes to the Gantt schedule:
 Spent a bit longer of DWT than expected, so other responsibilities are being pushed back a week
