@@ -94,12 +94,12 @@ public class DFTEncoder {
             }
         }
 
-        return FourierTransformer.forward(pixelData);
+        return FourierTransformer.transformColorPlane(pixelData);
     }
 
     private BufferedImage reverseFourier(BufferedImage C, int[][] coefficients, Integer mask) {
         //apply the haar function
-        int[][] pixelData = FourierTransformer.reverse(coefficients);
+        int[][] pixelData = FourierTransformer.transformColorPlane(coefficients);
 
         for (int row = 0; row < C.getHeight(); row++) {
             for (int col = 0; col < C.getWidth(); col++) {
