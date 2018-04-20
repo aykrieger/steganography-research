@@ -48,7 +48,6 @@ public class Main {
     }
 
     private static void RunWarden(String inputFilePath, String outputFilePath) throws IOException {
-        HelpFormatter formatter = new HelpFormatter();
         RawQuickPair warden = new RawQuickPair(inputFilePath);
         if (warden.isImageStegonagraphic()){
             System.console().writer().println("Image has Stenography");

@@ -112,4 +112,10 @@ public class RawQuickPair {
         return findRatio() > ratio;
     }
 
+    public void writeImage(String outputFilePath) throws IOException{
+        BufferedImage image = ImageIO.read(new File(this.imageFileName));
+        File outputImageFile = new File(outputFilePath);
+        ImageIO.write(image, "png", outputImageFile);
+    }
+
 }
