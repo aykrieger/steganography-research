@@ -38,10 +38,10 @@ public class Tool {
             String inputFileName = "InputImages/" + imageName;
 
             //creates unique names for all of the different stego images
-            String outputFileNameLSB = "StenographicOutputImages/LSB" + imageName;
-            String outputFileNameGreenBlue = "StenographicOutputImages/GreenBlue" + imageName;
-            String outputFileNameDFT = "StenographicOutputImages/DFT" + imageName;
-            String outputFileNameDWT = "StenographicOutputImages/DWT" + imageName;
+            String outputFileNameLSB = "StenographicOutputImages/LSB_" + imageName;
+            String outputFileNameGreenBlue = "StenographicOutputImages/GreenBlue_" + imageName;
+            String outputFileNameDFT = "StenographicOutputImages/DFT_" + imageName;
+            String outputFileNameDWT = "StenographicOutputImages/DWT_" + imageName;
 
             //finds the size of the image to figure out how large of a message to give it divide by 8 to account for char to bit
             BufferedImage image  = ImageIO.read(new File(inputFileName));
@@ -77,9 +77,9 @@ public class Tool {
             //gets the input file path
             String inputFileName = "StenographicOutputImages/" + imageName;
             //creates unique names for all of the different stego images
-            String outputFileNameBitDeletion = "WardenImages/BitDeletion" + imageName;
-            String outputFileNameRawQuickPair = "WardenImages/RawQuickPair" + imageName;
-            String outputFileNameDST = "WardenImages/DST" + imageName;
+            String outputFileNameBitDeletion = "WardenImages/BitDeletion_" + imageName;
+            String outputFileNameRawQuickPair = "WardenImages/RawQuickPair_" + imageName;
+            String outputFileNameDST = "WardenImages/DST_" + imageName;
 
             //run the bit deleter
             BitDeleter bitDeleter = new BitDeleter(inputFileName);
