@@ -98,7 +98,7 @@ public class DFTEncoder {
     }
 
     private BufferedImage reverseFourier(BufferedImage C, int[][] coefficients, Integer mask) {
-        //apply the haar function
+        //apply the Fourier function
         int[][] pixelData = FourierTransformer.transformColorPlane(coefficients);
 
         for (int row = 0; row < C.getHeight(); row++) {
@@ -131,7 +131,7 @@ public class DFTEncoder {
 
         encodingLoop:
         for (int j = 0; j < height; j+=2) {
-            for (int i = width; i < width; i+=2) {
+            for (int i = 0; i < width; i+=2) {
                 b = (coefficients[i][j] & 0x00000001);
 
                 if (result.append((byte) b)) break encodingLoop;

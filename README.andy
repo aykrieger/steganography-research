@@ -1,6 +1,16 @@
 Weekly Summary
 Andy Krieger
 
+## Week 8: 2018-04-14 to 2018-04-19
+
+James and I started the Discrete Fourier Transform algorithm. I worked on the actual Fourier algorithm and also added some tests.
+
+Files I worked on:
+- `src/main/java/frequency/DFT/DFTEncoder.java
+- `src/main/java/frequency/DFT/FourierTransform.java
+- `src/test/java/frequency/DFT/DFTEncoderTest.java
+
+
 ## Week 7: 2018-04-06 to 2018-04-13
 
 I created some tests for the BitBuilder and BitIterator classes so I could confirm they're working as expected. I also had to fix some hard to find bugs in the BitIterator and BitBuilder classes because there were issues converting between bytes and ASCII characters, signed bytes to bits, etc. Lastly, I finished the Green Blue encoding and decoding algorithms and thoroughly tested them.
