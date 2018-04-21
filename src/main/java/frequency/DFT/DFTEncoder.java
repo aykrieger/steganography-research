@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 
-/**
- * Impl based off of Kamila, Roy, and Changder, "A DWT based Steganography Scheme with Image Block Partitioning"
- * Uses a 2D Haar Wavelet transform to encode message bits
+/*
+ This DFT encoder is based on the algorithm described in "Discrete Fourier Transform as a Basis
+ for Stenographic Method" by M.O. Kozina.
+ (UDC 004.056.5:517.443)
  */
 
 public class DFTEncoder {
@@ -40,12 +41,12 @@ public class DFTEncoder {
     }
 
     /**
-     * Encodes the hidden message using Case 3 for now
-     * We are handling the encryption separately, so we do not need to worry about the Cantor Encryption Strategy
+     *
      * @param message
      * @throws IOException
      */
     public void Encode(String message) throws IOException {
+        message += BitIterator.END_DELIMITER;
         message += BitIterator.END_DELIMITER;
         BitIterator B = new BitIterator(message);
 
@@ -58,13 +59,13 @@ public class DFTEncoder {
         encodingLoop:
         for(int col = 0; col < height; col += 2) {
             for (int row = 0; row < width; row += 2) {
-                if(B.hasNext() == false) {
+                if (B.hasNext() == false) {
                     break encodingLoop;
                 }
 
                 int nextByte = B.next();
 
-                if(nextByte == 0) {
+                if (nextByte == 0) {
                     for(int b = col; b <= col + 1; b++) {
                         for(int a = row; a <= row + 1; a++) {
                             coefficients[a][b] = (coefficients[a][b] / 2) * 2;
@@ -94,17 +95,18 @@ public class DFTEncoder {
             }
         }
 
-        return FourierTransformer.transformColorPlane(pixelData);
+        return FourierTransform.transformColorPlane(pixelData);
     }
 
     private BufferedImage reverseFourier(BufferedImage C, int[][] coefficients, Integer mask) {
         //apply the Fourier function
-        int[][] pixelData = FourierTransformer.transformColorPlane(coefficients);
+        int[][] pixelData = FourierTransform.transformColorPlane(coefficients);
 
         for (int row = 0; row < C.getHeight(); row++) {
             for (int col = 0; col < C.getWidth(); col++) {
                 //int oldColor = C.getRGB(col, row);
-                int newColor = 0xFF000000 + (pixelData[col][row] << 16) + (pixelData[col][row] << 8) + (pixelData[col][row]);
+                int newColor = 0xFF000000 + (pixelData[col][row] << 16) +
+                               (pixelData[col][row] << 8) + (pixelData[col][row]);
                 //newColor = (newColor & (0xFF000000 | mask)) | (oldColor & ~(0xFF000000 | mask));
                 C.setRGB(col, row, newColor);
             }
@@ -115,7 +117,9 @@ public class DFTEncoder {
 
     public String Decode() throws IOException {
         BufferedImage S = ImageIO.read(new File(this.imageFileName));
-        return DecodeFromImage(S);
+        String decodedMessage = DecodeFromImage(S);
+        // Remove the delimiter character
+        return decodedMessage.substring(0, decodedMessage.length() - 1);
     }
 
     private String DecodeFromImage(BufferedImage S) throws IOException {

@@ -1,6 +1,6 @@
 package frequency.DFT;
 
-public class FourierTransformer {
+public class FourierTransform {
 
     public static int[][] transformColorPlane(int[][] input) {
 
@@ -27,8 +27,6 @@ public class FourierTransformer {
         return result;
     }
 
-    //partially from https://en.wikipedia.org/wiki/Discrete_wavelet_transform#Code_example
-    //only performs 1 level
     private static int[][] transform2x2block(int[][] input) {
 
         int[][] result = new int[2][2];
