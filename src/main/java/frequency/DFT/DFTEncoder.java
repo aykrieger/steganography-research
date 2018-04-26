@@ -54,34 +54,40 @@ public class DFTEncoder {
         int width = C.getWidth();
         int height = C.getHeight();
 
-        int[][] coefficients = forwardFourier(C, 0x000000FF, 0);
-
         encodingLoop:
-        for(int col = 0; col < height; col += 2) {
-            for (int row = 0; row < width; row += 2) {
-                if (B.hasNext() == false) {
-                    break encodingLoop;
-                }
+        for (int idx = 0; idx < colorComponentMasks.size(); idx++) {
+            Integer mask = colorComponentMasks.get(idx);
+            int[][] coefficients = forwardFourier(C, mask, idx*8);
 
-                int nextByte = B.next();
-
-                if (nextByte == 0) {
-                    for(int b = col; b <= col + 1; b++) {
-                        for(int a = row; a <= row + 1; a++) {
-                            coefficients[a][b] = (coefficients[a][b] / 2) * 2;
-                        }
+            for (int col = 0; col < height; col += 2) {
+                for (int row = 0; row < width; row += 2) {
+                    if (B.hasNext() == false) {
+                        C = reverseFourier(C, coefficients, mask);
+                        break encodingLoop;
                     }
-                } else {
-                    for(int b = col; b <= col + 1; b++) {
-                        for(int a = row; a <= row + 1; a++) {
-                            coefficients[a][b] = ((coefficients[a][b] / 2) * 2) + 1;
+
+                    int nextByte = B.next();
+
+                    if (nextByte == 0) {
+                        for (int b = col; b <= col + 1; b++) {
+                            for (int a = row; a <= row + 1; a++) {
+                                coefficients[a][b] = (coefficients[a][b] / 2) * 2;
+                            }
+                        }
+                    } else {
+                        for (int b = col; b <= col + 1; b++) {
+                            for (int a = row; a <= row + 1; a++) {
+                                coefficients[a][b] = ((coefficients[a][b] / 2) * 2) + 1;
+                            }
                         }
                     }
                 }
             }
+
+            C = reverseFourier(C, coefficients, mask);
         }
 
-        C = reverseFourier(C, coefficients, 0x000000FF);
+
         this.stegoImage = Optional.of(C);
     }
 
@@ -104,10 +110,10 @@ public class DFTEncoder {
 
         for (int row = 0; row < C.getHeight(); row++) {
             for (int col = 0; col < C.getWidth(); col++) {
-                //int oldColor = C.getRGB(col, row);
+                int oldColor = C.getRGB(col, row);
                 int newColor = 0xFF000000 + (pixelData[col][row] << 16) +
                                (pixelData[col][row] << 8) + (pixelData[col][row]);
-                //newColor = (newColor & (0xFF000000 | mask)) | (oldColor & ~(0xFF000000 | mask));
+                newColor = (newColor & (0xFF000000 | mask)) | (oldColor & ~(0xFF000000 | mask));
                 C.setRGB(col, row, newColor);
             }
         }
@@ -129,16 +135,18 @@ public class DFTEncoder {
         int width = S.getWidth();
         int height = S.getHeight();
 
-
-        int mask = 0x000000FF;
-        int[][] coefficients = forwardFourier(S, mask, 0);
-
         encodingLoop:
-        for (int j = 0; j < height; j+=2) {
-            for (int i = 0; i < width; i+=2) {
-                b = (coefficients[i][j] & 0x00000001);
+        for (int idx = 0; idx < colorComponentMasks.size(); idx++) {
 
-                if (result.append((byte) b)) break encodingLoop;
+            Integer mask = colorComponentMasks.get(idx);
+            int[][] coefficients = forwardFourier(S, mask, idx * 8);
+
+            for (int j = 0; j < height; j += 2) {
+                for (int i = 0; i < width; i += 2) {
+                    b = (coefficients[i][j] & 0x00000001);
+
+                    if (result.append((byte) b)) break encodingLoop;
+                }
             }
         }
 
