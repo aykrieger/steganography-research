@@ -99,10 +99,12 @@ public class Tool {
 
 
     public static void main(String[] args) throws IOException {
-        final File folderStego = new File("InputImages");
-        final File folderWardens = new File("StenographicOutputImages");
-        sendAllImagesToBeStego(folderStego);
-        sendAllImagesToWardens(folderWardens);
+        final File folderPlain = new File("InputImages");
+        final File folderStego = new File("StenographicOutputImages");
+        sendAllImagesToBeStego(folderPlain);
+        sendAllImagesToWardens(folderStego);
+
+        Robustness.calculate(folderStego);
     }
 
 
