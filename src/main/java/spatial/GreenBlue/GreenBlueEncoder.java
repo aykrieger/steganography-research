@@ -194,7 +194,7 @@ public class GreenBlueEncoder {
                             // Reached the delimiter character
                             break decodingLoopGreen;
                         }
-                    // We know the original message bit is the same as the bit at the
+                    // We know the original message bit is the complement the bit at the
                     // hashed position in the Green component
                     } else {
                         if (bitBuildRes.append((byte) (bitAtColorByte ^ 1))) {
