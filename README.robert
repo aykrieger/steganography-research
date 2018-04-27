@@ -1,5 +1,8 @@
 Weekly Summary
 Robert Milne
+Week 9: 2018-04-27
+worked on fixing the problems with rawquickpair interactions with tool and create a comparator which tells you the soundness of transmitted message
+files changed: \steganography-research\src\main\tool\tool,
 
 Week 8: 2018-04-20
 worked on creating a tool which takes in images from input file into the stego techniques and than all of those images into the wardens.
