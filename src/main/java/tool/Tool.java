@@ -88,9 +88,8 @@ public class Tool {
 
             //RawQuickPairWarden passes only non stego images
             RawQuickPair rawQuickPair = new RawQuickPair(inputFileName);
-            if (!rawQuickPair.isImageStegonagraphic()){
-                rawQuickPair.writeImage(outputFileNameRawQuickPair);
-            }
+            rawQuickPair.writeImage(outputFileNameRawQuickPair);
+
 
             DiscreteSpringTransform discreteSpringTransform = new DiscreteSpringTransform(inputFileName);
             discreteSpringTransform.writeImage(outputFileNameDST);
@@ -98,7 +97,51 @@ public class Tool {
     }
 
 
+    private static void compareMessages(final File folder) throws IOException {
+        String largeMessage = readLargeMessage();
+        for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
+
+            //gets the name of the files
+            String imageName = (imagePointer.getName());
+
+            //gets the input file path
+            String inputFileName = "WardenImages/" + imageName;
+
+
+            //finds the size of the image to figure out how large of a message to give it divide by 8 to account for char to bit
+            BufferedImage image  = ImageIO.read(new File(inputFileName));
+            int imageSize= image.getHeight() * image.getWidth()/16;
+            if (imageName.contains("LSB_")){
+                LeastSignificantBitEncoder leastSignificantBitEncoder = new LeastSignificantBitEncoder(inputFileName);
+                leastSignificantBitEncoder.Decode();
+            }
+            else if (imageName.contains("GreenBlue_")){
+                imageSize=imageSize*2/3;
+                GreenBlueEncoder.decode(inputFileName,12345);
+            }
+            else if (imageName.contains("DFT_")){
+                imageSize=imageSize/4;
+            }
+            else if (imageName.contains("DST_")){
+                imageSize=imageSize/4;
+            }
+
+            //int frequenceyMessageSize = imageSize/4;
+            //encodes the image as a dwt
+            //DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
+            //dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+            //dftEncoder.WriteImage(outputFileNameDWT);
+
+            //encodes the image as a dwt
+            //DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
+            //dwtEncoder.WriteImage(outputFileNameDWT);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
+        BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt"));
+        ratioWriter.write(""); // clear file
+        ratioWriter.close();
         final File folderStego = new File("InputImages");
         final File folderWardens = new File("StenographicOutputImages");
         sendAllImagesToBeStego(folderStego);

@@ -1,13 +1,10 @@
 package warden.RawQuickPair;
 
-import lib.BitBuilder;
+
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Optional;
+import java.io.*;
 
 public class RawQuickPair {
 
@@ -51,15 +48,16 @@ public class RawQuickPair {
     }
 
     public double findRatio(){
-        int uniqueColors = 0;
-        int closeColors =0;
-        int signedBit = 0;
+        double uniqueColors = 0;
+        double closeColors =0;
+        double signedBit = 0;
+        double ratio = 0;
         for (byte leastSignificantBits : pixelArray) {
             if (leastSignificantBits < 0) {
                 signedBit = 1;
                 leastSignificantBits += 128;
             }
-            int numberOfOnes = Integer.bitCount((int) leastSignificantBits) + signedBit;
+            double numberOfOnes = Integer.bitCount((int) leastSignificantBits) + signedBit;
             signedBit = 0;
             if (numberOfOnes == 1)
                 uniqueColors++;
@@ -68,7 +66,8 @@ public class RawQuickPair {
                 closeColors += numberOfOnes;
             }
         }
-        double ratio = closeColors / uniqueColors;
+        if (uniqueColors != 0){
+            ratio = closeColors / uniqueColors;}
         return ratio;
     }
 
@@ -109,13 +108,21 @@ public class RawQuickPair {
 
     public boolean isImageStegonagraphic () throws IOException{
         this.pixelArraySort();
-        return findRatio() > ratio;
+        double ratioFound = findRatio();
+        return  ratioFound> this.ratio;
     }
 
     public void writeImage(String outputFilePath) throws IOException{
         BufferedImage image = ImageIO.read(new File(this.imageFileName));
         File outputImageFile = new File(outputFilePath);
-        ImageIO.write(image, "png", outputImageFile);
+        BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt",true));
+        ratioWriter.write(this.imageFileName+ ": \t"+ findRatio()+ "\n");
+        ratioWriter.close();
+        double ratioFound = findRatio();
+        if (ratioFound> this.ratio){
+            ImageIO.write(image, "png", outputImageFile);
+        }
+
     }
 
 }
