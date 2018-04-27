@@ -115,11 +115,11 @@ public class RawQuickPair {
     public void writeImage(String outputFilePath) throws IOException{
         BufferedImage image = ImageIO.read(new File(this.imageFileName));
         File outputImageFile = new File(outputFilePath);
+        boolean isImageStegonagraphic = isImageStegonagraphic();
         BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt",true));
         ratioWriter.write(this.imageFileName+ ": \t"+ findRatio()+ "\n");
         ratioWriter.close();
-        double ratioFound = findRatio();
-        if (ratioFound> this.ratio){
+        if (!isImageStegonagraphic){
             ImageIO.write(image, "png", outputImageFile);
         }
 

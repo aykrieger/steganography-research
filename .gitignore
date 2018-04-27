@@ -4,6 +4,8 @@
 
 # Java
 out/
+StenographicOutputImages/
+WardenImages/
 build/
 target/
 config/

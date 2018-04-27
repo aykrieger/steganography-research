@@ -99,6 +99,7 @@ public class Tool {
 
     private static void compareMessages(final File folder) throws IOException {
         String largeMessage = readLargeMessage();
+        BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt", true));
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
 
             //gets the name of the files
@@ -110,42 +111,64 @@ public class Tool {
 
             //finds the size of the image to figure out how large of a message to give it divide by 8 to account for char to bit
             BufferedImage image  = ImageIO.read(new File(inputFileName));
+
             int imageSize= image.getHeight() * image.getWidth()/16;
+            String incomingMessage = null;
             if (imageName.contains("LSB_")){
                 LeastSignificantBitEncoder leastSignificantBitEncoder = new LeastSignificantBitEncoder(inputFileName);
-                leastSignificantBitEncoder.Decode();
+                incomingMessage = leastSignificantBitEncoder.Decode();
             }
             else if (imageName.contains("GreenBlue_")){
                 imageSize=imageSize*2/3;
-                GreenBlueEncoder.decode(inputFileName,12345);
+                incomingMessage = GreenBlueEncoder.decode(inputFileName,12345);
             }
             else if (imageName.contains("DFT_")){
                 imageSize=imageSize/4;
+                DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
+                incomingMessage = dftEncoder.Decode();
             }
-            else if (imageName.contains("DST_")){
+            else if (imageName.contains("DWT_")){
                 imageSize=imageSize/4;
+                DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
+                incomingMessage = dwtEncoder.Decode();
             }
+            if (incomingMessage != null) {
+                double ratio = stringComparator(incomingMessage, largeMessage.substring(0, imageSize));
+                ratioWriter.write(imageName + ": \t" + ratio + "\n");
 
-            //int frequenceyMessageSize = imageSize/4;
-            //encodes the image as a dwt
-            //DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
-            //dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-            //dftEncoder.WriteImage(outputFileNameDWT);
-
-            //encodes the image as a dwt
-            //DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
-            //dwtEncoder.WriteImage(outputFileNameDWT);
+            }
         }
+        ratioWriter.close();
+    }
+
+    private static double stringComparator(String incomingMessage, String expectedMessage){
+        int k = expectedMessage.length();
+        int j = incomingMessage.length();
+        if (incomingMessage.length()!=expectedMessage.length()){
+            return -1.0;
+        }
+        double numberOfRightChar = 0.0;
+        for (int i = 0; i < incomingMessage.length(); i++) {
+            if (incomingMessage.charAt(i) == expectedMessage.charAt(i)){
+                numberOfRightChar++;
+            }
+        }
+        return numberOfRightChar/ (double) incomingMessage.length();
     }
 
     public static void main(String[] args) throws IOException {
         BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt"));
         ratioWriter.write(""); // clear file
         ratioWriter.close();
+        BufferedWriter comparatorWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt"));
+        comparatorWriter.write(""); // clear file
+        comparatorWriter.close();
         final File folderStego = new File("InputImages");
         final File folderWardens = new File("StenographicOutputImages");
+        final File folderComparator = new File("WardenImages");
         sendAllImagesToBeStego(folderStego);
         sendAllImagesToWardens(folderWardens);
+        compareMessages(folderComparator);
     }
 
 
