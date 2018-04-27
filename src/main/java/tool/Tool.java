@@ -16,7 +16,7 @@ import java.util.Objects;
 public class Tool {
 
     //this reads the large text file in messages and converts it into a usable string
-    private static String readLargeMessage () throws IOException {
+    public static String readLargeMessage () throws IOException {
         File file = new File("Messages/largeTextFile.txt");
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         StringBuilder stringBuilder = new StringBuilder();
@@ -97,14 +97,15 @@ public class Tool {
         }
     }
 
-
     public static void main(String[] args) throws IOException {
         final File folderPlain = new File("InputImages");
         final File folderStego = new File("StenographicOutputImages");
         sendAllImagesToBeStego(folderPlain);
         sendAllImagesToWardens(folderStego);
 
-        Robustness.calculate(folderStego);
+        String message = readLargeMessage();
+
+        Robustness.calculate(folderStego, new LeastSignificantBitEncoder(), message);
     }
 
 

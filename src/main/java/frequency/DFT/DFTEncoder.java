@@ -2,6 +2,7 @@ package frequency.DFT;
 
 import lib.BitBuilder;
 import lib.BitIterator;
+import lib.Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,7 +20,7 @@ import java.util.Optional;
  (UDC 004.056.5:517.443)
  */
 
-public class DFTEncoder {
+public class DFTEncoder implements Encoder {
     private String imageFileName;
     private Optional<BufferedImage> stegoImage = Optional.empty();
     private List<Integer> colorComponentMasks = new ArrayList<>(Arrays.asList(0x000000FF, 0x0000FF00, 0x00FF0000));
@@ -27,6 +28,18 @@ public class DFTEncoder {
 
     public DFTEncoder(String imageFileName) {
         this.imageFileName = imageFileName;
+    }
+
+    public double GetCapacityFactor() {
+        return 3/32;
+    }
+
+    public void SetImage(String path) {
+        this.imageFileName = path;
+    }
+
+    public String GetName() {
+        return "DFT";
     }
 
     public boolean WriteImage(String outputFileName) throws IOException {
