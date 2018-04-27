@@ -15,6 +15,10 @@ import java.util.Collections;
  This encoding scheme embeds the message within the 2nd to 8th bit in the blue or green
  channel (or both) of a pixel. The embedded bit position is chosen with a hash function. This makes
  the bit selection behave randomly and allows the decoder to select the same randomly selected bits.
+
+ This encoder is based on the algorithm in "An Improved Color Image Steganography Technique in
+ Spatial Domain by Saikat Mondal, Rameswar Debnath, and Borun Kumar Mondal.
+ (DOI: 10.1109/ICECE.2016.7853987)
  */
 public class GreenBlueEncoder {
 

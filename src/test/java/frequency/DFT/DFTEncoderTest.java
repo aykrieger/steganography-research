@@ -15,7 +15,7 @@ public class DFTEncoderTest {
 
     @Test
     public void encodeDecode_nominal1() throws IOException {
-        // Status: Not Passing
+        // Status: Passing
         String inputImgPath = testingLib.inputImagesDir + "dwt.png";
         String outputImgPath = testingLib.outputImagesDir + "dft_result.png";
         String inputMes = "Test Message";
@@ -26,8 +26,38 @@ public class DFTEncoderTest {
 
         DFTEncoder dftDecoder = new DFTEncoder(outputImgPath);
         String result = dftDecoder.Decode();
-        // There's a bug where the BitBuilder doesn't see the String delimiter character,
-        // maybe we could add two delimiter characters so the BitBuilder can't miss it
+        assertTrue(result.equals(expectedMes));
+    }
+
+    @Test
+    public void encodeDecode_garbageCharacters() throws IOException {
+        // Status: Passing
+        String inputImgPath = testingLib.inputImagesDir + "dwt.png";
+        String outputImgPath = testingLib.outputImagesDir + "dft_result.png";
+        String inputMes = "Garbage Characters: {)(*jk2&fjs98j2rgdsg32j2@#2j15sd(*kjd9";
+        String expectedMes = "Garbage Characters: {)(*jk2&fjs98j2rgdsg32j2@#2j15sd(*kjd9";
+        DFTEncoder dftEncoder = new DFTEncoder(inputImgPath);
+        dftEncoder.Encode(inputMes);
+        dftEncoder.WriteImage(outputImgPath);
+
+        DFTEncoder dftDecoder = new DFTEncoder(outputImgPath);
+        String result = dftDecoder.Decode();
+        assertTrue(result.equals(expectedMes));
+    }
+
+    @Test
+    public void encodeDecode_shortMessage() throws IOException {
+        // Status: Passing
+        String inputImgPath = testingLib.inputImagesDir + "dwt.png";
+        String outputImgPath = testingLib.outputImagesDir + "dft_result.png";
+        String inputMes = "A";
+        String expectedMes = "A";
+        DFTEncoder dftEncoder = new DFTEncoder(inputImgPath);
+        dftEncoder.Encode(inputMes);
+        dftEncoder.WriteImage(outputImgPath);
+
+        DFTEncoder dftDecoder = new DFTEncoder(outputImgPath);
+        String result = dftDecoder.Decode();
         assertTrue(result.equals(expectedMes));
     }
 }

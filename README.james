@@ -2,6 +2,22 @@ Weekly Summary
 James Vaughn
 
 ------------------------------------------------------------------------------------
+Week 9: 2018-04-27
+Changes to the Gantt schedule:
+---
+
+Files changed:
+-src/main/java/frequency/DFT/DFTEncoder
+I added in DFT encoding of all 3 color components so now we can encode messages in the full image capacity.
+This finishes of DFT.
+
+-src/main/java/tool/Robustness
+I started the robustness calculation tool, which will give us the robustness score for each technique.
+
+Non-code work done:
+---
+
+------------------------------------------------------------------------------------
 Week 8: 2018-04-20
 Changes to the Gantt schedule:
 
