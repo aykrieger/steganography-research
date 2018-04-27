@@ -16,7 +16,7 @@ import java.util.Objects;
 public class Tool {
 
     //this reads the large text file in messages and converts it into a usable string
-    private static String readLargeMessage () throws IOException {
+    public static String readLargeMessage () throws IOException {
         File file = new File("Messages/largeTextFile.txt");
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         StringBuilder stringBuilder = new StringBuilder();
@@ -96,7 +96,6 @@ public class Tool {
         }
     }
 
-
     private static void compareMessages(final File folder) throws IOException {
         String largeMessage = readLargeMessage();
         BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt", true));
@@ -163,12 +162,17 @@ public class Tool {
         BufferedWriter comparatorWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt"));
         comparatorWriter.write(""); // clear file
         comparatorWriter.close();
-        final File folderStego = new File("InputImages");
-        final File folderWardens = new File("StenographicOutputImages");
+
+        final File folderPlain = new File("InputImages");
+        final File folderStego = new File("StenographicOutputImages");
         final File folderComparator = new File("WardenImages");
-        sendAllImagesToBeStego(folderStego);
-        sendAllImagesToWardens(folderWardens);
+        sendAllImagesToBeStego(folderPlain);
+        sendAllImagesToWardens(folderStego);
         compareMessages(folderComparator);
+
+        String message = readLargeMessage();
+//        Double score = Robustness.calculate(folderStego, new LeastSignificantBitEncoder(), message);
+//        System.out.println("LSB : " + score);
     }
 
 

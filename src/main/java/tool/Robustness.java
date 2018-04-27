@@ -1,10 +1,13 @@
 package tool;
 
+import lib.BitIterator;
+import lib.Encoder;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Calculated per technique as % of message bits preserved after compression
@@ -15,28 +18,46 @@ public class Robustness {
     /**
      * @return a map of technique name to calculated robustness
      */
-    public static Map<String, Double> calculate(File imageFolder) {
-        //TODO filter by regex
-        //So only grab LSB_*
-
-        //for technique {
+    public static Double calculate(File imageFolder, Encoder encoder, String message) throws IOException {
+        List<Double> scoreList = new ArrayList<>();
 
         for (final File imagePointer : Objects.requireNonNull(imageFolder.listFiles())) {
             //gets the name of the files
             String imageName = (imagePointer.getName());
 
-            //gets the input file path
-            String inputFileName = imageFolder.getName() + "/" + imageName;
+            if (imageName.contains(encoder.GetName())) {
+                //gets the input file path
+                String inputFileName = imageFolder.getName() + "/" + imageName;
+                scoreList.add(robustnessScore(inputFileName, encoder, message));
+            }
 
-            //compress
-            //calc diff and put into list
         }
-        // average technique values
-        //}
 
-        Map<String, Double> results = new HashMap<>();
+        return average(scoreList);
+    }
 
-        return results;
+    private static Double robustnessScore(String imagePath, Encoder encoder, String message) throws IOException {
+        BufferedImage image = ImageIO.read(new File(imagePath));
+
+        //todo compress image
+
+        encoder.SetImage(imagePath);
+        String output = encoder.Decode();
+
+
+        int messageLen = (int)encoder.GetCapacityFactor()*message.length();
+        BitIterator messageIter = new BitIterator(message.substring(0,messageLen));
+        BitIterator outputIter = new BitIterator(output);
+
+        int correctCount = 0;
+        while(outputIter.hasNext()) {
+            if(outputIter.next() == messageIter.next()) {
+                correctCount++;
+            }
+        }
+
+        return correctCount / (messageLen * 8.0);
+
     }
 
     private static Double average(List<Double> trials) {

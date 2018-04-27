@@ -2,6 +2,8 @@ package spatial.LSB;
 
 import lib.BitBuilder;
 import lib.BitIterator;
+import lib.Encoder;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,12 +11,27 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
-public class LeastSignificantBitEncoder {
+public class LeastSignificantBitEncoder implements Encoder {
     private String imageFileName;
     private Optional<BufferedImage> stegoImage = Optional.empty();
 
+    public LeastSignificantBitEncoder() {
+        this.imageFileName = null;
+    }
     public LeastSignificantBitEncoder(String imageFileName) {
         this.imageFileName = imageFileName;
+    }
+
+    public double GetCapacityFactor() {
+        return 3/8;
+    }
+
+    public void SetImage(String path) {
+        this.imageFileName = path;
+    }
+
+    public String GetName(){
+        return "LSB";
     }
 
     public void Encode(String message) throws IOException {

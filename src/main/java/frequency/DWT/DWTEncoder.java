@@ -2,6 +2,7 @@ package frequency.DWT;
 
 import lib.BitBuilder;
 import lib.BitIterator;
+import lib.Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,15 +16,27 @@ import java.util.*;
  * Uses a 2D Haar Wavelet transform to encode message bits
  */
 
-public class DWTEncoder {
+public class DWTEncoder implements Encoder {
     private String imageFileName;
     private Optional<BufferedImage> stegoImage = Optional.empty();
     private List<Integer> colorComponentMasks = new ArrayList<>(Arrays.asList(0x000000FF, 0x0000FF00, 0x00FF0000));
 
-
     public DWTEncoder(String imageFileName) {
         this.imageFileName = imageFileName;
     }
+
+    public double GetCapacityFactor() {
+        return 3/32;
+    }
+
+    public String GetName() {
+        return "DWT";
+    }
+
+    public void SetImage(String path) {
+        this.imageFileName = path;
+    }
+
 
     public boolean WriteImage(String outputFileName) throws IOException {
         if(this.stegoImage.isPresent() == false) {
