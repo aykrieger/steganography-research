@@ -1,5 +1,6 @@
 package tool;
 
+import lib.BitIterator;
 import lib.Encoder;
 
 import javax.imageio.ImageIO;
@@ -18,18 +19,18 @@ public class Robustness {
      * @return a map of technique name to calculated robustness
      */
     public static Double calculate(File imageFolder, Encoder encoder, String message) throws IOException {
-        //TODO filter by encoder getname regex
-
         List<Double> scoreList = new ArrayList<>();
 
         for (final File imagePointer : Objects.requireNonNull(imageFolder.listFiles())) {
             //gets the name of the files
             String imageName = (imagePointer.getName());
 
-            //gets the input file path
-            String inputFileName = imageFolder.getName() + "/" + imageName;
+            if (imageName.contains(encoder.GetName())) {
+                //gets the input file path
+                String inputFileName = imageFolder.getName() + "/" + imageName;
+                scoreList.add(robustnessScore(inputFileName, encoder, message));
+            }
 
-            scoreList.add(robustnessScore(inputFileName, encoder, message));
         }
 
         return average(scoreList);
@@ -37,15 +38,25 @@ public class Robustness {
 
     private static Double robustnessScore(String imagePath, Encoder encoder, String message) throws IOException {
         BufferedImage image = ImageIO.read(new File(imagePath));
-        //compress image
+
+        //todo compress image
 
         encoder.SetImage(imagePath);
         String output = encoder.Decode();
 
-        //read capacity Factor * message bits of the message and compare to output
-        //return bits correct / total bits
 
-        return 0d;
+        int messageLen = (int)encoder.GetCapacityFactor()*message.length();
+        BitIterator messageIter = new BitIterator(message.substring(0,messageLen));
+        BitIterator outputIter = new BitIterator(output);
+
+        int correctCount = 0;
+        while(outputIter.hasNext()) {
+            if(outputIter.next() == messageIter.next()) {
+                correctCount++;
+            }
+        }
+
+        return correctCount / (messageLen * 8.0);
 
     }
 

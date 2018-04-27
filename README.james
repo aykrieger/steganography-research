@@ -11,8 +11,13 @@ Files changed:
 I added in DFT encoding of all 3 color components so now we can encode messages in the full image capacity.
 This finishes of DFT.
 
+-src/main/java/lib/Encoder
+-LSB, DFT, and DWT encoders
+I added an encoder interface and modified 3 of our 4 encoders implement this interface. This was done to make creating our tool easier.
+
 -src/main/java/tool/Robustness
-I started the robustness calculation tool, which will give us the robustness score for each technique.
+I started the robustness calculation tool, which will give us the robustness score for each technique. I have the logic flow done.
+I need to add compression and confirm that the core logic works as intended, but the code otherwise gives the logic flow.
 
 Non-code work done:
 ---

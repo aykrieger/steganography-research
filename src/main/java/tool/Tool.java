@@ -171,7 +171,8 @@ public class Tool {
         compareMessages(folderComparator);
 
         String message = readLargeMessage();
-        Robustness.calculate(folderStego, new LeastSignificantBitEncoder(), message);
+//        Double score = Robustness.calculate(folderStego, new LeastSignificantBitEncoder(), message);
+//        System.out.println("LSB : " + score);
     }
 
 

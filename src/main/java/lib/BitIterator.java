@@ -18,7 +18,7 @@ public class BitIterator implements Iterator {
     public int bytesIterated;
 
     public BitIterator(String message) throws UnsupportedEncodingException {
-        this.message = new ArrayList<Byte>();
+        this.message = new ArrayList<>();
 
         for (char c : message.toCharArray()) {
             this.message.add((byte) c);
@@ -38,6 +38,8 @@ public class BitIterator implements Iterator {
     //Returns in the form of a byte due to necessity
     @Override
     public Byte next() {
+        if(hasNext() == false) return null;
+
         int b = currentByte >> (BITS_IN_A_BYTE - (bitsIteratedInByte + 1));
         b = b & 0x01;
 
