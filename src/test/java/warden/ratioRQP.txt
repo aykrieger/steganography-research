@@ -1,0 +1,16 @@
+StenographicOutputImages/GreenBlue_blackPixelArt.png: 	1.0
+StenographicOutputImages/GreenBlue_dwt.png: 	1.0
+StenographicOutputImages/GreenBlue_elevenColorPixelArt.png: 	0.625
+StenographicOutputImages/GreenBlue_fruit bowl.png: 	0.4277959081209991
+StenographicOutputImages/GreenBlue_green_blue_input_1.png: 	0.9092961496496874
+StenographicOutputImages/GreenBlue_lsb.png: 	0.9092961496496874
+StenographicOutputImages/GreenBlue_onlyClosePairs.png: 	1.0
+StenographicOutputImages/GreenBlue_sixtyFourty.png: 	1.0
+StenographicOutputImages/LSB_blackPixelArt.png: 	1.0
+StenographicOutputImages/LSB_dwt.png: 	1.0
+StenographicOutputImages/LSB_elevenColorPixelArt.png: 	0.75
+StenographicOutputImages/LSB_fruit bowl.png: 	0.42827136497586055
+StenographicOutputImages/LSB_green_blue_input_1.png: 	0.9083178794426391
+StenographicOutputImages/LSB_lsb.png: 	0.9083178794426391
+StenographicOutputImages/LSB_onlyClosePairs.png: 	1.0
+StenographicOutputImages/LSB_sixtyFourty.png: 	1.0

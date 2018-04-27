@@ -1,0 +1,32 @@
+BitDeletion_GreenBlue_blackPixelArt.png: 	-1.0
+BitDeletion_GreenBlue_dwt.png: 	-1.0
+BitDeletion_GreenBlue_elevenColorPixelArt.png: 	-1.0
+BitDeletion_GreenBlue_fruit bowl.png: 	-1.0
+BitDeletion_GreenBlue_green_blue_input_1.png: 	-1.0
+BitDeletion_GreenBlue_lsb.png: 	-1.0
+BitDeletion_GreenBlue_onlyClosePairs.png: 	-1.0
+BitDeletion_GreenBlue_sixtyFourty.png: 	-1.0
+BitDeletion_LSB_blackPixelArt.png: 	-1.0
+BitDeletion_LSB_dwt.png: 	-1.0
+BitDeletion_LSB_elevenColorPixelArt.png: 	-1.0
+BitDeletion_LSB_fruit bowl.png: 	-1.0
+BitDeletion_LSB_green_blue_input_1.png: 	-1.0
+BitDeletion_LSB_lsb.png: 	-1.0
+BitDeletion_LSB_onlyClosePairs.png: 	-1.0
+BitDeletion_LSB_sixtyFourty.png: 	-1.0
+DST_GreenBlue_blackPixelArt.png: 	-1.0
+DST_GreenBlue_dwt.png: 	-1.0
+DST_GreenBlue_elevenColorPixelArt.png: 	-1.0
+DST_GreenBlue_fruit bowl.png: 	-1.0
+DST_GreenBlue_green_blue_input_1.png: 	-1.0
+DST_GreenBlue_lsb.png: 	-1.0
+DST_GreenBlue_onlyClosePairs.png: 	-1.0
+DST_GreenBlue_sixtyFourty.png: 	-1.0
+DST_LSB_blackPixelArt.png: 	-1.0
+DST_LSB_dwt.png: 	-1.0
+DST_LSB_elevenColorPixelArt.png: 	-1.0
+DST_LSB_fruit bowl.png: 	-1.0
+DST_LSB_green_blue_input_1.png: 	-1.0
+DST_LSB_lsb.png: 	-1.0
+DST_LSB_onlyClosePairs.png: 	-1.0
+DST_LSB_sixtyFourty.png: 	-1.0
