@@ -1,4 +1,4 @@
-package spatial.LSB;
+package GreenBlue;
 
 import lib.TestingLib;
 import org.junit.jupiter.api.Test;

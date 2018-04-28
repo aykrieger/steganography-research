@@ -23,7 +23,7 @@ import java.util.Collections;
 public class GreenBlueEncoder {
 
     public static void encode(String inputImgDir, String outputImgDir, String origMessage,
-                              int secretKey) throws IOException{
+                              int secretKey) throws IOException {
         if (origMessage.isEmpty()) {
             throw new IllegalArgumentException("Input message must not be empty");
         }

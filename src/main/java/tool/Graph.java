@@ -1,53 +1,73 @@
 package tool;
 
-import javax.swing.JPanel;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
-import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
-import org.jfree.chart.ui.ApplicationFrame;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.chart.ui.UIUtils;
 
-public class Graph extends ApplicationFrame {
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 
-    public Graph( String title ) {
-        super( title );
-        setContentPane(createDemoPanel( ));
+public class Graph {
+
+    final static int PLOT_WIDTH = 500;
+    final static int PLOT_HEIGHT = 350;
+
+    public static void displayStoragePlot(HashMap<StegoTechnique, Double> inputMap) {
+        JFreeChart chart = storageEfficiencyChart(inputMap);
+        displayChart(chart);
     }
 
-    private static PieDataset createDataset( ) {
-        DefaultPieDataset dataset = new DefaultPieDataset( );
-        dataset.setValue( "IPhone 5s" , new Double( 20 ) );
-        dataset.setValue( "SamSung Grand" , new Double( 20 ) );
-        dataset.setValue( "MotoG" , new Double( 40 ) );
-        dataset.setValue( "Nokia Lumia" , new Double( 10 ) );
-        return dataset;
+    public static void saveStoragePlot(HashMap<StegoTechnique, Double> inputMap,
+                                       String outputDir) throws IOException {
+        JFreeChart chart = storageEfficiencyChart(inputMap);
+        File barChartFile = new File(outputDir);
+        ChartUtils.saveChartAsPNG(barChartFile, chart, PLOT_WIDTH, PLOT_HEIGHT);
     }
 
-    private static JFreeChart createChart( PieDataset dataset ) {
-        JFreeChart chart = ChartFactory.createPieChart(
-                "Mobile Sales",   // chart title
-                dataset,          // data
-                true,             // include legend
+    public static JFreeChart storageEfficiencyChart(HashMap<StegoTechnique, Double> inputMap) {
+        DefaultCategoryDataset dataset = map2dataset(inputMap);
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Storage Efficiency",
+                "Technique",
+                "Number of Message Bits per Pixel",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false,
                 true,
-                false);
-
+                false
+        );
         return chart;
     }
 
-    public static JPanel createDemoPanel( ) {
-        JFreeChart chart = createChart(createDataset( ) );
-        return new ChartPanel( chart );
+    public static void graphDetectability() {
+
     }
 
-    public static void main( String[ ] args ) {
-        PieDataset dataset = createDataset();
-        JFreeChart chart = createChart(dataset);
+    public static void graphRobustness() {
+
+    }
+
+    public static DefaultCategoryDataset map2dataset(HashMap<StegoTechnique, Double> inputMap) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        String series1 = "Series1";
+        dataset.setValue(inputMap.get(StegoTechnique.LSB), series1, "LSB");
+        dataset.setValue(inputMap.get(StegoTechnique.GREENBLUE), series1, "GreenBlue");
+        dataset.setValue(inputMap.get(StegoTechnique.DWT), series1, "DWT");
+        dataset.setValue(inputMap.get(StegoTechnique.DFT), series1, "DFT");
+
+        return dataset;
+    }
+
+    public static void displayChart(JFreeChart chart) {
         ChartFrame frame = new ChartFrame("First", chart);
-        frame.setSize( 560 , 367 );
+        frame.setSize(PLOT_WIDTH, PLOT_HEIGHT);
         UIUtils.centerFrameOnScreen(frame);
-        frame.setVisible( true );    }
+        frame.setVisible(true);
+    }
 }
