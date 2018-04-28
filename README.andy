@@ -1,14 +1,23 @@
 Weekly Summary
 Andy Krieger
 
+## Week 9: 2018-04-20 to 2018-04-27
+
+I worked on setting up the graphs for our final analysis. I also created some tests and created a document that specifies what we're going to include in our analysis.
+
+Files I worked on:
+- `src/main/java/tool/Graph.java`
+- `src/test/java/tool/GraphTest.java`
+
+
 ## Week 8: 2018-04-14 to 2018-04-19
 
 James and I started the Discrete Fourier Transform algorithm. I worked on the actual Fourier algorithm and also added some tests.
 
 Files I worked on:
-- `src/main/java/frequency/DFT/DFTEncoder.java
-- `src/main/java/frequency/DFT/FourierTransform.java
-- `src/test/java/frequency/DFT/DFTEncoderTest.java
+- `src/main/java/frequency/DFT/DFTEncoder.java`
+- `src/main/java/frequency/DFT/FourierTransform.java`
+- `src/test/java/frequency/DFT/DFTEncoderTest.java`
 
 
 ## Week 7: 2018-04-06 to 2018-04-13
