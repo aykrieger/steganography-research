@@ -116,13 +116,9 @@ public class RawQuickPair {
         BufferedImage image = ImageIO.read(new File(this.imageFileName));
         File outputImageFile = new File(outputFilePath);
         boolean isImageStegonagraphic = isImageStegonagraphic();
-        BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt",true));
-        ratioWriter.write(this.imageFileName+ ": \t"+ findRatio()+ "\n");
-        ratioWriter.close();
         if (!isImageStegonagraphic){
             ImageIO.write(image, "png", outputImageFile);
         }
-
     }
 
 }
