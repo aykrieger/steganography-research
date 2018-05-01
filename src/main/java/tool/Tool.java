@@ -36,7 +36,7 @@ public class Tool {
             String imageName = (imagePointer.getName());
             if (!imageName.equals("Thumbs.db")) {
                 //gets the input file path
-                String inputFileName = "InputImages/" + imageName;
+                String inputFileName = "ToolImages/" + imageName;
 
                 //creates unique names for all of the different stego images
                 String outputFileNameLSB = "StenographicOutputImages/LSB_" + imageName;
@@ -57,16 +57,17 @@ public class Tool {
                 int gbMessageSize = imageSize * 2 / 3;
                 GreenBlueEncoder.encode(inputFileName, outputFileNameGreenBlue, largeMessage.substring(0, gbMessageSize), 12345);
 
-                //int frequenceyMessageSize = imageSize/4;
+                int frequenceyMessageSize = imageSize/4;
                 //encodes the image as a dwt
-                //DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
-                //dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-                //dftEncoder.WriteImage(outputFileNameDWT);
+
+                DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
+                dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+                dftEncoder.WriteImage(outputFileNameDFT);
 
                 //encodes the image as a dwt
-                //DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
-                //dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-                //dwtEncoder.WriteImage(outputFileNameDWT);
+                DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
+                dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+                dwtEncoder.WriteImage(outputFileNameDWT);
             }
         }
     }
@@ -75,26 +76,27 @@ public class Tool {
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
             //gets the name of the files
             String imageName = (imagePointer.getName());
+            if (!imageName.equals("Thumbs.db")) {
+                //gets the input file path
+                String inputFileName = "StenographicOutputImages/" + imageName;
+                //creates unique names for all of the different stego images
+                String outputFileNameBitDeletion = "WardenImages/BitDeletion_" + imageName;
+                String outputFileNameRawQuickPair = "WardenImages/RawQuickPair_" + imageName;
+                String outputFileNameDST = "WardenImages/DST_" + imageName;
 
-            //gets the input file path
-            String inputFileName = "StenographicOutputImages/" + imageName;
-            //creates unique names for all of the different stego images
-            String outputFileNameBitDeletion = "WardenImages/BitDeletion_" + imageName;
-            String outputFileNameRawQuickPair = "WardenImages/RawQuickPair_" + imageName;
-            String outputFileNameDST = "WardenImages/DST_" + imageName;
+                //run the bit deleter
+                BitDeleter bitDeleter = new BitDeleter(inputFileName);
+                bitDeleter.ScrubImage();
+                bitDeleter.WriteImage(outputFileNameBitDeletion);
 
-            //run the bit deleter
-            BitDeleter bitDeleter = new BitDeleter(inputFileName);
-            bitDeleter.ScrubImage();
-            bitDeleter.WriteImage(outputFileNameBitDeletion);
-
-            //RawQuickPairWarden passes only non stego images
-            RawQuickPair rawQuickPair = new RawQuickPair(inputFileName);
-            rawQuickPair.writeImage(outputFileNameRawQuickPair);
+                //RawQuickPairWarden passes only non stego images
+                RawQuickPair rawQuickPair = new RawQuickPair(inputFileName);
+                rawQuickPair.writeImage(outputFileNameRawQuickPair);
 
 
-            DiscreteSpringTransform discreteSpringTransform = new DiscreteSpringTransform(inputFileName);
-            discreteSpringTransform.writeImage(outputFileNameDST);
+                DiscreteSpringTransform discreteSpringTransform = new DiscreteSpringTransform(inputFileName);
+                discreteSpringTransform.writeImage(outputFileNameDST);
+            }
         }
     }
 
@@ -105,39 +107,36 @@ public class Tool {
 
             //gets the name of the files
             String imageName = (imagePointer.getName());
+            if (!imageName.equals("Thumbs.db")) {
+                //gets the input file path
+                String inputFileName = "WardenImages/" + imageName;
 
-            //gets the input file path
-            String inputFileName = "WardenImages/" + imageName;
 
+                //finds the size of the image to figure out how large of a message to give it divide by 8 to account for char to bit
+                BufferedImage image = ImageIO.read(new File(inputFileName));
 
-            //finds the size of the image to figure out how large of a message to give it divide by 8 to account for char to bit
-            BufferedImage image  = ImageIO.read(new File(inputFileName));
-
-            int imageSize= image.getHeight() * image.getWidth()/16;
-            String incomingMessage = null;
-            if (imageName.contains("LSB_")){
-                LeastSignificantBitEncoder leastSignificantBitEncoder = new LeastSignificantBitEncoder(inputFileName);
-                incomingMessage = leastSignificantBitEncoder.Decode();
-            }
-            else if (imageName.contains("GreenBlue_")){
-                imageSize=imageSize*2/3;
-                incomingMessage = GreenBlueEncoder.decode(inputFileName,12345);
-            }
-            else if (imageName.contains("DFT_")){
-                imageSize=imageSize/4;
-                DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
-                incomingMessage = dftEncoder.Decode();
-            }
-            else if (imageName.contains("DWT_")){
-                imageSize=imageSize/4;
-                DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
-                incomingMessage = dwtEncoder.Decode();
-            }
-            if (incomingMessage != null) {
-                double ratio = stringComparator(incomingMessage, largeMessage.substring(0, imageSize));
-                ratioWriter.write("\n"+imageName + ":\n");
-                ratioWriter.write(incomingMessage+"\n\n");
-
+                int imageSize = image.getHeight() * image.getWidth() / 16;
+                String incomingMessage = null;
+                if (imageName.contains("LSB_")) {
+                    LeastSignificantBitEncoder leastSignificantBitEncoder = new LeastSignificantBitEncoder(inputFileName);
+                    incomingMessage = leastSignificantBitEncoder.Decode();
+                } else if (imageName.contains("GreenBlue_")) {
+                    imageSize = imageSize * 2 / 3;
+                    incomingMessage = GreenBlueEncoder.decode(inputFileName, 12345);
+                } else if (imageName.contains("DFT_")) {
+                    imageSize = imageSize / 4;
+                    DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
+                    incomingMessage = dftEncoder.Decode();
+                } else if (imageName.contains("DWT_")) {
+                    imageSize = imageSize / 4;
+                    DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
+                    incomingMessage = dwtEncoder.Decode();
+                }
+                if (incomingMessage != null) {
+                    double ratio = stringComparator(incomingMessage, largeMessage.substring(0, imageSize));
+                    ratioWriter.write("\n" + imageName + ":\n");
+                    ratioWriter.write(incomingMessage + "\n\n");
+                }
             }
         }
         ratioWriter.close();
@@ -166,7 +165,7 @@ public class Tool {
         comparatorWriter.write(""); // clear file
         comparatorWriter.close();
 
-        final File folderPlain = new File("InputImages");
+        final File folderPlain = new File("ToolImages");
         final File folderStego = new File("StenographicOutputImages");
         final File folderComparator = new File("WardenImages");
         sendAllImagesToBeStego(folderPlain);
