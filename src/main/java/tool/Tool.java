@@ -2,6 +2,7 @@ package tool;
 
 import frequency.DFT.DFTEncoder;
 import frequency.DWT.DWTEncoder;
+import lib.BitIterator;
 import spatial.GreenBlue.GreenBlueEncoder;
 import spatial.LSB.LeastSignificantBitEncoder;
 import warden.BitDeletion.BitDeleter;
@@ -142,19 +143,21 @@ public class Tool {
         ratioWriter.close();
     }
 
-    private static double stringComparator(String incomingMessage, String expectedMessage){
-        int k = expectedMessage.length();
-        int j = incomingMessage.length();
-        if (incomingMessage.length()!=expectedMessage.length()){
-            return -1.0;
-        }
-        double numberOfRightChar = 0.0;
-        for (int i = 0; i < incomingMessage.length(); i++) {
-            if (incomingMessage.charAt(i) == expectedMessage.charAt(i)){
-                numberOfRightChar++;
+    private static double stringComparator(String actualMessage, String expectedMessage) throws UnsupportedEncodingException {
+        BitIterator actualIter = new BitIterator(actualMessage);
+        BitIterator outputIter = new BitIterator(expectedMessage);
+
+        BitIterator shorterIter = actualMessage.length() < expectedMessage.length() ? actualIter : outputIter;
+        int maxLen = actualMessage.length() > expectedMessage.length() ? actualMessage.length() : expectedMessage.length();
+
+        int correctCount = 0;
+        while(shorterIter.hasNext()) {
+            if(outputIter.next() == actualIter.next()) {
+                correctCount++;
             }
         }
-        return numberOfRightChar/ (double) incomingMessage.length();
+
+        return correctCount / (maxLen * 8.0);
     }
 
     public static void main(String[] args) throws IOException {
@@ -171,10 +174,6 @@ public class Tool {
         sendAllImagesToBeStego(folderPlain);
         sendAllImagesToWardens(folderStego);
         compareMessages(folderComparator);
-
-        String message = readLargeMessage();
-//        Double score = Robustness.calculate(folderStego, new LeastSignificantBitEncoder(), message);
-//        System.out.println("LSB : " + score);
     }
 
 
