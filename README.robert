@@ -1,5 +1,9 @@
 Weekly Summary
 Robert Milne
+Week 10: 2018-05-01
+worked on creating txt files which output the results from the wardens and stegonographic techniques, also debugged the string comprarator.
+files changed: \steganography-research\src\main\tool\tool, \steganography-research\src\main\tool\ratioSucessfullyTransmittedMessage,steganography-research\src\test\java\wardens\ratioRQP
+
 Week 9: 2018-04-27
 worked on fixing the problems with rawquickpair interactions with tool and create a comparator which tells you the soundness of transmitted message
 files changed: \steganography-research\src\main\tool\tool,
