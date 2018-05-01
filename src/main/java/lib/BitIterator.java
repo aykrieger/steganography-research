@@ -24,6 +24,8 @@ public class BitIterator implements Iterator {
             this.message.add((byte) c);
         }
 
+        this.message.add((byte) END_DELIMITER);
+
         if (this.message.size() > 0) {
             this.currentByte = this.message.remove(0);
         }

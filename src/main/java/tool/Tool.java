@@ -61,14 +61,14 @@ public class Tool {
                 int frequenceyMessageSize = imageSize/4;
                 //encodes the image as a dwt
 
-                DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
-                dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-                dftEncoder.WriteImage(outputFileNameDFT);
-
-                //encodes the image as a dwt
-                DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
-                dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-                dwtEncoder.WriteImage(outputFileNameDWT);
+//                DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
+//                dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+//                dftEncoder.WriteImage(outputFileNameDFT);
+//
+//                //encodes the image as a dwt
+//                DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
+//                dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+//                dwtEncoder.WriteImage(outputFileNameDWT);
             }
         }
     }
@@ -135,7 +135,7 @@ public class Tool {
                 }
                 if (incomingMessage != null) {
                     double ratio = stringComparator(incomingMessage, largeMessage.substring(0, imageSize));
-                    ratioWriter.write("\n" + imageName + ":\n");
+                    ratioWriter.write("\n" + imageName + " : " + ratio +"\n");
                     ratioWriter.write(incomingMessage + "\n\n");
                 }
             }
@@ -162,10 +162,11 @@ public class Tool {
 
     public static void main(String[] args) throws IOException {
         BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt"));
-        ratioWriter.write(""); // clear file
+        ratioWriter.flush();
         ratioWriter.close();
+
         BufferedWriter comparatorWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt"));
-        comparatorWriter.write(""); // clear file
+        comparatorWriter.flush();
         comparatorWriter.close();
 
         final File folderPlain = new File("ToolImages");
