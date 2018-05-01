@@ -14,7 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Objects;
 
-public class Tool {
+public class Tool  {
 
     //this reads the large text file in messages and converts it into a usable string
     public static String readLargeMessage () throws IOException {
@@ -73,7 +73,7 @@ public class Tool {
         }
     }
 
-    private static void sendAllImagesToWardens(final File folder) throws IOException {
+    private static void sendAllImagesToWardens(final File folder, BufferedWriter rawQuickPairWriter) throws IOException {
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
             //gets the name of the files
             String imageName = (imagePointer.getName());
@@ -93,7 +93,7 @@ public class Tool {
                 //RawQuickPairWarden passes only non stego images
                 RawQuickPair rawQuickPair = new RawQuickPair(inputFileName);
                 rawQuickPair.writeImage(outputFileNameRawQuickPair);
-
+                rawQuickPairWriter.write(imageName+ ": \t"+ rawQuickPair.findRatio()+ "\n");
 
                 DiscreteSpringTransform discreteSpringTransform = new DiscreteSpringTransform(inputFileName);
                 discreteSpringTransform.writeImage(outputFileNameDST);
@@ -101,7 +101,7 @@ public class Tool {
         }
     }
 
-    private static void compareMessages(final File folder) throws IOException {
+    private static void compareMessages(final File folder, BufferedWriter comparatorWriter) throws IOException {
         String largeMessage = readLargeMessage();
         BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt", true));
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
@@ -135,8 +135,8 @@ public class Tool {
                 }
                 if (incomingMessage != null) {
                     double ratio = stringComparator(incomingMessage, largeMessage.substring(0, imageSize));
-                    ratioWriter.write("\n" + imageName + " : " + ratio +"\n");
-                    ratioWriter.write(incomingMessage + "\n\n");
+                    comparatorWriter.write("\n" + imageName + " : " + ratio +"\n");
+                    comparatorWriter.write(incomingMessage + "\n\n");
                 }
             }
         }
@@ -161,20 +161,18 @@ public class Tool {
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt"));
-        ratioWriter.flush();
-        ratioWriter.close();
-
+        BufferedWriter rawQuickPairWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt"));
         BufferedWriter comparatorWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt"));
-        comparatorWriter.flush();
-        comparatorWriter.close();
 
         final File folderPlain = new File("ToolImages");
         final File folderStego = new File("StenographicOutputImages");
         final File folderComparator = new File("WardenImages");
+
         sendAllImagesToBeStego(folderPlain);
-        sendAllImagesToWardens(folderStego);
-        compareMessages(folderComparator);
+        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
+        compareMessages(folderComparator, comparatorWriter);
+        rawQuickPairWriter.close();
+        comparatorWriter.close();
     }
 
 
