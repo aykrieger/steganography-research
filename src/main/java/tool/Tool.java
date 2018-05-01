@@ -20,8 +20,9 @@ public class Tool {
         File file = new File("Messages/largeTextFile.txt");
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         StringBuilder stringBuilder = new StringBuilder();
-        while ((bufferedReader.readLine()) != null){
-            stringBuilder.append(bufferedReader);
+        String line;
+        while ((line = bufferedReader.readLine()) != null){
+            stringBuilder.append(line);
         }
         return stringBuilder.toString();
     }
@@ -33,39 +34,40 @@ public class Tool {
 
             //gets the name of the files
             String imageName = (imagePointer.getName());
+            if (!imageName.equals("Thumbs.db")) {
+                //gets the input file path
+                String inputFileName = "InputImages/" + imageName;
 
-            //gets the input file path
-            String inputFileName = "InputImages/" + imageName;
+                //creates unique names for all of the different stego images
+                String outputFileNameLSB = "StenographicOutputImages/LSB_" + imageName;
+                String outputFileNameGreenBlue = "StenographicOutputImages/GreenBlue_" + imageName;
+                String outputFileNameDFT = "StenographicOutputImages/DFT_" + imageName;
+                String outputFileNameDWT = "StenographicOutputImages/DWT_" + imageName;
 
-            //creates unique names for all of the different stego images
-            String outputFileNameLSB = "StenographicOutputImages/LSB_" + imageName;
-            String outputFileNameGreenBlue = "StenographicOutputImages/GreenBlue_" + imageName;
-            String outputFileNameDFT = "StenographicOutputImages/DFT_" + imageName;
-            String outputFileNameDWT = "StenographicOutputImages/DWT_" + imageName;
+                //finds the size of the image to figure out how large of a message to give it divide by 8 to account for char to bit
+                BufferedImage image = ImageIO.read(new File(inputFileName));
+                int imageSize = image.getHeight() * image.getWidth() / 16;
 
-            //finds the size of the image to figure out how large of a message to give it divide by 8 to account for char to bit
-            BufferedImage image  = ImageIO.read(new File(inputFileName));
-            int imageSize= image.getHeight() * image.getWidth()/16;
+                //this encodes the image as LSB
+                LeastSignificantBitEncoder leastSignificantBitEncoder = new LeastSignificantBitEncoder(inputFileName);
+                leastSignificantBitEncoder.Encode(largeMessage.substring(0, imageSize));
+                leastSignificantBitEncoder.WriteImage(outputFileNameLSB);
 
-            //this encodes the image as LSB
-            LeastSignificantBitEncoder leastSignificantBitEncoder = new LeastSignificantBitEncoder(inputFileName);
-            leastSignificantBitEncoder.Encode(largeMessage.substring(0,imageSize));
-            leastSignificantBitEncoder.WriteImage(outputFileNameLSB);
+                //encodes image as GB secret key is 12345 since it is easy to remember
+                int gbMessageSize = imageSize * 2 / 3;
+                GreenBlueEncoder.encode(inputFileName, outputFileNameGreenBlue, largeMessage.substring(0, gbMessageSize), 12345);
 
-            //encodes image as GB secret key is 12345 since it is easy to remember
-            int gbMessageSize = imageSize*2/3;
-            GreenBlueEncoder.encode(inputFileName, outputFileNameGreenBlue, largeMessage.substring(0,gbMessageSize), 12345);
+                //int frequenceyMessageSize = imageSize/4;
+                //encodes the image as a dwt
+                //DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
+                //dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+                //dftEncoder.WriteImage(outputFileNameDWT);
 
-            //int frequenceyMessageSize = imageSize/4;
-            //encodes the image as a dwt
-            //DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
-            //dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-            //dftEncoder.WriteImage(outputFileNameDWT);
-
-            //encodes the image as a dwt
-            //DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
-            //dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-            //dwtEncoder.WriteImage(outputFileNameDWT);
+                //encodes the image as a dwt
+                //DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
+                //dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+                //dwtEncoder.WriteImage(outputFileNameDWT);
+            }
         }
     }
 
@@ -133,7 +135,8 @@ public class Tool {
             }
             if (incomingMessage != null) {
                 double ratio = stringComparator(incomingMessage, largeMessage.substring(0, imageSize));
-                ratioWriter.write(imageName + ": \t" + ratio + "\n");
+                ratioWriter.write("\n"+imageName + ":\n");
+                ratioWriter.write(incomingMessage+"\n\n");
 
             }
         }
