@@ -47,14 +47,4 @@ public class GraphTest {
         Graph.saveStoragePlot(dataMap, outputPath);
     }
 
-    @Test
-    public void graphDetectability_nominal() {
-
-    }
-
-    @Test
-    public void graphRobustness_nominal() {
-
-    }
-
 }

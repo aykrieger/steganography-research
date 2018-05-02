@@ -22,8 +22,22 @@ import java.util.Collections;
  */
 public class GreenBlueEncoder {
 
+    /**
+     * Encodes the specified message in the given image and saves the steganographic
+     * image to the specified location.
+     *
+     * The secret key is used so the message in the steganographic image can only be read
+     * if the decoder is given the same secret key that was used in the encoder.
+     *
+     * @param inputImgDir   Input image directory
+     * @param outputImgDir  Output image directory
+     * @param origMessage   Custom message, accepts any valid Strings
+     * @param secretKey     Secret key that is shared between the encoder and decoder
+     * @throws IOException
+     */
     public static void encode(String inputImgDir, String outputImgDir, String origMessage,
                               int secretKey) throws IOException {
+
         if (origMessage.isEmpty()) {
             throw new IllegalArgumentException("Input message must not be empty");
         }
@@ -47,6 +61,7 @@ public class GreenBlueEncoder {
         // fit in the Blue component
         boolean encodeGreen = true;
 
+        // Encode the message in the Blue component of the image
         encodingLoopBlue:
         for (int y = 0; y < imageHeight; y++) {
             for (int x = 0; x < imageWidth; x++) {
@@ -64,6 +79,7 @@ public class GreenBlueEncoder {
             }
         }
 
+        // Encode the message in the Green component of the image
         if (encodeGreen) {
             encodingLoopGreen:
             for (int y = 0; y < imageHeight; y++) {
@@ -88,6 +104,10 @@ public class GreenBlueEncoder {
         ImageIO.write(image, "png", outputImageFile);
     }
 
+    /*
+    Uses the algorithm defined in the reference paper to encode the individual pixels of the image
+    with the hidden message bits
+     */
     public static int encodePixel(int pixelVal, BitIterator bitMessage, int secretKey,
                                   int imageSize, GBencoderType encodeType) {
 
@@ -137,6 +157,13 @@ public class GreenBlueEncoder {
         return pixelVal;
     }
 
+    /**
+     *
+     * @param inputImage
+     * @param secretKey
+     * @return
+     * @throws IOException
+     */
     public static String decode(String inputImage, int secretKey) throws IOException {
         BitBuilder bitBuildRes = new BitBuilder();
 
@@ -149,6 +176,7 @@ public class GreenBlueEncoder {
         // not been reached while decoding the Blue component
         boolean decodeGreen = true;
 
+        // Retrieve the hidden message from the Blue component of the image
         decodingLoopBlue:
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
@@ -177,6 +205,7 @@ public class GreenBlueEncoder {
             }
         }
 
+        // Retrieve the hidden message from the green component of the image
         if (decodeGreen) {
             decodingLoopGreen:
             for (int y = 0; y < image.getHeight(); y++) {

@@ -14,14 +14,16 @@ import java.util.HashMap;
 
 public class Graph {
 
-    final static int PLOT_WIDTH = 500;
-    final static int PLOT_HEIGHT = 350;
+    private final static int PLOT_WIDTH = 500;
+    private final static int PLOT_HEIGHT = 350;
 
+    // Displays the Storage Efficiency Chart to the user
     public static void displayStoragePlot(HashMap<StegoTechnique, Double> inputMap) {
         JFreeChart chart = storageEfficiencyChart(inputMap);
         displayChart(chart);
     }
 
+    // Saves the Storage Efficiency Chart as an image
     public static void saveStoragePlot(HashMap<StegoTechnique, Double> inputMap,
                                        String outputDir) throws IOException {
         JFreeChart chart = storageEfficiencyChart(inputMap);
@@ -29,7 +31,22 @@ public class Graph {
         ChartUtils.saveChartAsPNG(barChartFile, chart, PLOT_WIDTH, PLOT_HEIGHT);
     }
 
-    public static JFreeChart storageEfficiencyChart(HashMap<StegoTechnique, Double> inputMap) {
+    // Displays the Detectability Chart to the user
+    public static void displayDetectabilityPlot(HashMap<StegoTechnique, Double> inputMap) {
+        JFreeChart chart = detectabilityChart(inputMap);
+        displayChart(chart);
+    }
+
+    // Saves the Detectability Chart as an image
+    public static void saveDetectabilityPlot(HashMap<StegoTechnique, Double> inputMap,
+                                       String outputDir) throws IOException {
+        JFreeChart chart = detectabilityChart(inputMap);
+        File barChartFile = new File(outputDir);
+        ChartUtils.saveChartAsPNG(barChartFile, chart, PLOT_WIDTH, PLOT_HEIGHT);
+    }
+
+    // Specifies the Storage Efficiency Chart axis labels
+    private static JFreeChart storageEfficiencyChart(HashMap<StegoTechnique, Double> inputMap) {
         DefaultCategoryDataset dataset = map2dataset(inputMap);
         JFreeChart chart = ChartFactory.createBarChart(
                 "Storage Efficiency",
@@ -44,15 +61,23 @@ public class Graph {
         return chart;
     }
 
-    public static void graphDetectability() {
-
+    // Specifies the Detectability Chart axis labels
+    private static JFreeChart detectabilityChart(HashMap<StegoTechnique, Double> inputMap) {
+        DefaultCategoryDataset dataset = map2dataset(inputMap);
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Detectability",
+                "Technique",
+                "Detection Rate (Percent)",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false,
+                true,
+                false
+        );
+        return chart;
     }
 
-    public static void graphRobustness() {
-
-    }
-
-    public static DefaultCategoryDataset map2dataset(HashMap<StegoTechnique, Double> inputMap) {
+    private static DefaultCategoryDataset map2dataset(HashMap<StegoTechnique, Double> inputMap) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         String series1 = "Series1";
@@ -64,7 +89,7 @@ public class Graph {
         return dataset;
     }
 
-    public static void displayChart(JFreeChart chart) {
+    private static void displayChart(JFreeChart chart) {
         ChartFrame frame = new ChartFrame("First", chart);
         frame.setSize(PLOT_WIDTH, PLOT_HEIGHT);
         UIUtils.centerFrameOnScreen(frame);
