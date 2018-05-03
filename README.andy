@@ -8,6 +8,7 @@ I found test images to test our steganography algorithms on and finished the cod
 Files I worked on:
 - `src/main/java/tool/Graph.java`
 - `src/test/java/tool/GraphTest.java`
+- `src/main/java/tool/Tool.java`
 
 ## Week 9: 2018-04-20 to 2018-04-27
 

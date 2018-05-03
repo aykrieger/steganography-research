@@ -31,13 +31,20 @@ public class Tool  {
     //this method takes all images in the input folder and creates a Stenographic version of the image
     private static void sendAllImagesToBeStego(final File folder) throws IOException {
         String largeMessage = readLargeMessage();
+
+        int count = 1;
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
 
             //gets the name of the files
             String imageName = (imagePointer.getName());
             if (!imageName.equals("Thumbs.db")) {
+
                 //gets the input file path
                 String inputFileName = "ToolImages/" + imageName;
+
+                if (imageName.endsWith(".jpg")) {
+                    imageName = imageName.replace(".jpg", ".png");
+                }
 
                 //creates unique names for all of the different stego images
                 String outputFileNameLSB = "StenographicOutputImages/LSB_" + imageName;
@@ -61,19 +68,24 @@ public class Tool  {
                 int frequenceyMessageSize = imageSize/4;
                 //encodes the image as a dwt
 
-//                DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
-//                dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-//                dftEncoder.WriteImage(outputFileNameDFT);
-//
-//                //encodes the image as a dwt
-//                DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
-//                dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
-//                dwtEncoder.WriteImage(outputFileNameDWT);
+                DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
+                dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+                dftEncoder.WriteImage(outputFileNameDFT);
+
+                //encodes the image as a dwt
+                DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
+                dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+                dwtEncoder.WriteImage(outputFileNameDWT);
+
+                System.out.println("Finished encoding " + count + "/50 images");
+                count++;
             }
         }
     }
 
     private static void sendAllImagesToWardens(final File folder, BufferedWriter rawQuickPairWriter) throws IOException {
+        int count = 1;
+
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
             //gets the name of the files
             String imageName = (imagePointer.getName());
@@ -97,6 +109,11 @@ public class Tool  {
 
                 DiscreteSpringTransform discreteSpringTransform = new DiscreteSpringTransform(inputFileName);
                 discreteSpringTransform.writeImage(outputFileNameDST);
+
+                if (count % 4 == 0) {
+                    System.out.println("Warden completed " + (count / 4) + "/50 images");
+                }
+                count++;
             }
         }
     }
@@ -160,6 +177,10 @@ public class Tool  {
         return correctCount / (maxLen * 8.0);
     }
 
+    /*
+    You must have the folders "StenographicOutputImages" and "WardenImages" in the project's root
+    directory before running this method.
+     */
     public static void main(String[] args) throws IOException {
         BufferedWriter rawQuickPairWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt"));
         BufferedWriter comparatorWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt"));
@@ -169,15 +190,17 @@ public class Tool  {
         final File folderComparator = new File("WardenImages");
 
         //clears the files in the outputting files
-        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
-            fileStego.delete();
-        }
-        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
-            fileWarden.delete();
-        }
+//        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
+//            fileStego.delete();
+//        }
+//        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
+//            fileWarden.delete();
+//        }
+//
+//        sendAllImagesToBeStego(folderPlain);
+//        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
 
-        sendAllImagesToBeStego(folderPlain);
-        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
+
         compareMessages(folderComparator, comparatorWriter);
         rawQuickPairWriter.close();
         comparatorWriter.close();

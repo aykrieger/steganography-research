@@ -103,7 +103,13 @@ public class DWTEncoder implements Encoder {
         //get the pixel data to transform with the color component from the mask
         for (int row = 0; row < C.getHeight(); row++) {
             for (int col = 0; col < C.getWidth(); col++) {
-                pixelData[col][row] = (C.getRGB(col, row) & mask) >> shiftAmt;
+                try {
+                    pixelData[col][row] = (C.getRGB(col, row) & mask) >> shiftAmt;
+                } catch ( ArrayIndexOutOfBoundsException e ) {
+                    int cat = 5;
+                }
+
+
             }
         }
 

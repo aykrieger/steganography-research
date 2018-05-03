@@ -24,18 +24,18 @@ public class GreenBlueEncoder {
 
     /**
      * Encodes the specified message in the given image and saves the steganographic
-     * image to the specified location.
+     * PNG image to the specified location.
      *
      * The secret key is used so the message in the steganographic image can only be read
      * if the decoder is given the same secret key that was used in the encoder.
      *
-     * @param inputImgDir   Input image directory
-     * @param outputImgDir  Output image directory
-     * @param origMessage   Custom message, accepts any valid Strings
-     * @param secretKey     Secret key that is shared between the encoder and decoder
+     * @param inputImgPath   Input image path, formatted as png or jpg
+     * @param outputImgPath  Output image path, formatted as png
+     * @param origMessage    Custom message, accepts any valid Strings
+     * @param secretKey      Secret key that is shared between the encoder and decoder
      * @throws IOException
      */
-    public static void encode(String inputImgDir, String outputImgDir, String origMessage,
+    public static void encode(String inputImgPath, String outputImgPath, String origMessage,
                               int secretKey) throws IOException {
 
         if (origMessage.isEmpty()) {
@@ -52,7 +52,7 @@ public class GreenBlueEncoder {
             throw new RuntimeException("Could not encode message: " + e.getMessage());
         }
 
-        BufferedImage image = ImageIO.read(new File(inputImgDir));
+        BufferedImage image = ImageIO.read(new File(inputImgPath));
         int imageHeight = image.getHeight();
         int imageWidth = image.getWidth();
         int imageSize = imageHeight * imageWidth;
@@ -100,7 +100,7 @@ public class GreenBlueEncoder {
             throw new RuntimeException("Could not fit message in image");
         }
 
-        File outputImageFile = new File(outputImgDir);
+        File outputImageFile = new File(outputImgPath);
         ImageIO.write(image, "png", outputImageFile);
     }
 
@@ -158,21 +158,22 @@ public class GreenBlueEncoder {
     }
 
     /**
+     * Returns the decoded message from a steganographic image
      *
-     * @param inputImage
-     * @param secretKey
-     * @return
+     * @param inputImgPath    Input image path, formatted as png or jpg
+     * @param secretKey       Secret key that is shared between the encoder and decoder
+     * @return                The hidden message from the steganographic image
      * @throws IOException
      */
-    public static String decode(String inputImage, int secretKey) throws IOException {
+    public static String decode(String inputImgPath, int secretKey) throws IOException {
         BitBuilder bitBuildRes = new BitBuilder();
 
-        BufferedImage image = ImageIO.read(new File(inputImage));
+        BufferedImage image = ImageIO.read(new File(inputImgPath));
         int imageHeight = image.getHeight();
         int imageWidth = image.getWidth();
         int imageSize = imageHeight * imageWidth;
 
-        // Green component of image is only decoded if the message delimiter has
+        // The Green component of image is only decoded if the message delimiter has
         // not been reached while decoding the Blue component
         boolean decodeGreen = true;
 
@@ -238,6 +239,10 @@ public class GreenBlueEncoder {
         return GreenBlueEncoder.unscrambleMessage(scrambledMessage);
     }
 
+    /*
+    Uses the algorithm defined in the reference paper to decode the individual pixels of the image
+    with the hidden message bits
+    */
     public static int decodePixel(int pixelVal, int secretKey, int imageSize,
                                   GBencoderType encodeType) {
 
@@ -263,6 +268,7 @@ public class GreenBlueEncoder {
         return GreenBlueEncoder.getBitAt(colorByte, bitPos);
     }
 
+    // Returns the given String after scrambling the bits of each character
     public static String scrambleMessage(String message) {
         message += BitIterator.END_DELIMITER;
         BitIterator bitMessage;
@@ -301,6 +307,7 @@ public class GreenBlueEncoder {
         return scrambledMesBuilder.toString();
     }
 
+    //Returns the given String after unscrambling the bits of each character
     public static String unscrambleMessage(String scrambledMes) {
         StringBuilder builder = new StringBuilder();
 
