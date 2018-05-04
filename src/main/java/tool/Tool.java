@@ -198,6 +198,10 @@ public class Tool  {
         return correctCount / (maxLen * 8.0);
     }
 
+    private static void graphResults(HashMap<StegoTechnique, ArrayList<Double>> resultMap) {
+
+    }
+
     /*
     You must have the following folders and  in the project's root directory before running
     this method:
@@ -232,7 +236,7 @@ public class Tool  {
         rawQuickPairWriter.close();
         comparatorWriter.close();
 
-        
+
     }
 
 

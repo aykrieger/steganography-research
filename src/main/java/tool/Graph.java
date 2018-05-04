@@ -10,7 +10,10 @@ import org.jfree.chart.ui.UIUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 public class Graph {
 
@@ -19,6 +22,7 @@ public class Graph {
 
     // Displays the Storage Efficiency Chart to the user
     public static void displayStoragePlot(HashMap<StegoTechnique, Double> inputMap) {
+
         JFreeChart chart = storageEfficiencyChart(inputMap);
         displayChart(chart);
     }
@@ -26,27 +30,33 @@ public class Graph {
     // Saves the Storage Efficiency Chart as an image
     public static void saveStoragePlot(HashMap<StegoTechnique, Double> inputMap,
                                        String outputDir) throws IOException {
+
         JFreeChart chart = storageEfficiencyChart(inputMap);
         File barChartFile = new File(outputDir);
         ChartUtils.saveChartAsPNG(barChartFile, chart, PLOT_WIDTH, PLOT_HEIGHT);
     }
 
-    // Displays the Detectability Chart to the user
-    public static void displayDetectabilityPlot(HashMap<StegoTechnique, Double> inputMap) {
-        JFreeChart chart = detectabilityChart(inputMap);
+    // Displays the Correctness Chart to the user
+    public static void displayCorrectnessPlot(HashMap<StegoTechnique,
+            ArrayList<Double>> inputMap) {
+
+        JFreeChart chart = correctnessChart(inputMap);
         displayChart(chart);
     }
 
-    // Saves the Detectability Chart as an image
-    public static void saveDetectabilityPlot(HashMap<StegoTechnique, Double> inputMap,
+    // Saves the Correctness Chart as an image
+    public static void saveCorrectnessPlot(HashMap<StegoTechnique, ArrayList<Double>> inputMap,
                                        String outputDir) throws IOException {
-        JFreeChart chart = detectabilityChart(inputMap);
+
+        JFreeChart chart = correctnessChart(inputMap);
         File barChartFile = new File(outputDir);
         ChartUtils.saveChartAsPNG(barChartFile, chart, PLOT_WIDTH, PLOT_HEIGHT);
     }
 
     // Specifies the Storage Efficiency Chart axis labels
-    private static JFreeChart storageEfficiencyChart(HashMap<StegoTechnique, Double> inputMap) {
+    private static JFreeChart storageEfficiencyChart(
+            HashMap<StegoTechnique, Double> inputMap) {
+
         DefaultCategoryDataset dataset = map2dataset(inputMap);
         JFreeChart chart = ChartFactory.createBarChart(
                 "Storage Efficiency",
@@ -62,8 +72,31 @@ public class Graph {
     }
 
     // Specifies the Detectability Chart axis labels
-    private static JFreeChart detectabilityChart(HashMap<StegoTechnique, Double> inputMap) {
-        DefaultCategoryDataset dataset = map2dataset(inputMap);
+    private static JFreeChart correctnessChart(
+            HashMap<StegoTechnique, ArrayList<Double>> inputMap) {
+
+        ArrayList<Double> dataLSB = inputMap.get(StegoTechnique.LSB);
+        ArrayList<Double> dataGreenBlue = inputMap.get(StegoTechnique.GREENBLUE);
+        ArrayList<Double> dataDFT = inputMap.get(StegoTechnique.DFT);
+        ArrayList<Double> dataDWT = inputMap.get(StegoTechnique.DWT);
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        String series1 = "Series1";
+
+        if (dataLSB != null) {
+            dataset.setValue(averageVal(dataLSB), series1, "LSB");
+        }
+        if (dataGreenBlue != null) {
+            dataset.setValue(averageVal(dataGreenBlue), series1, "GreenBlue");
+        }
+        if (dataDFT != null) {
+            dataset.setValue(averageVal(dataDFT), series1, "DFT");
+        }
+        if (dataDWT != null) {
+            dataset.setValue(averageVal(dataDWT), series1, "DWT");
+        }
+
+
         JFreeChart chart = ChartFactory.createBarChart(
                 "Detectability",
                 "Technique",
@@ -83,8 +116,8 @@ public class Graph {
         String series1 = "Series1";
         dataset.setValue(inputMap.get(StegoTechnique.LSB), series1, "LSB");
         dataset.setValue(inputMap.get(StegoTechnique.GREENBLUE), series1, "GreenBlue");
-        dataset.setValue(inputMap.get(StegoTechnique.DWT), series1, "DWT");
         dataset.setValue(inputMap.get(StegoTechnique.DFT), series1, "DFT");
+        dataset.setValue(inputMap.get(StegoTechnique.DWT), series1, "DWT");
 
         return dataset;
     }
@@ -94,5 +127,14 @@ public class Graph {
         frame.setSize(PLOT_WIDTH, PLOT_HEIGHT);
         UIUtils.centerFrameOnScreen(frame);
         frame.setVisible(true);
+    }
+
+    private static double averageVal(ArrayList<Double> data) {
+        OptionalDouble average = data
+                .stream()
+                .mapToDouble(a -> a)
+                .average();
+
+        return average.isPresent() ? average.getAsDouble() : 0;
     }
 }

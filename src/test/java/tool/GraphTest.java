@@ -8,6 +8,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GraphTest {
@@ -16,12 +17,12 @@ public class GraphTest {
 
     @Test
     public void displayStoragePlot_nominal() {
-        HashMap<StegoTechnique, Double> dataMap = new HashMap<>();
+        HashMap<StegoTechnique, ArrayList<Double>> dataMap = new HashMap<>();
 
-        dataMap.put(StegoTechnique.LSB, 10.0);
-        dataMap.put(StegoTechnique.GREENBLUE, 3.0);
-        dataMap.put(StegoTechnique.DWT, 23.0);
-        dataMap.put(StegoTechnique.DFT, 28.0);
+        dataMap.put(StegoTechnique.LSB, new ArrayList<Double>());
+        dataMap.put(StegoTechnique.GREENBLUE, new ArrayList<Double>());
+        dataMap.put(StegoTechnique.DWT, new ArrayList<Double>());
+        dataMap.put(StegoTechnique.DFT, new ArrayList<Double>());
         Graph.displayStoragePlot(dataMap);
 
         // This dummy chart is used so the previous chart is rendered while
