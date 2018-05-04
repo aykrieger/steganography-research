@@ -17,12 +17,12 @@ public class GraphTest {
 
     @Test
     public void displayStoragePlot_nominal() {
-        HashMap<StegoTechnique, ArrayList<Double>> dataMap = new HashMap<>();
+        HashMap<StegoTechnique, Double> dataMap = new HashMap<>();
 
-        dataMap.put(StegoTechnique.LSB, new ArrayList<Double>());
-        dataMap.put(StegoTechnique.GREENBLUE, new ArrayList<Double>());
-        dataMap.put(StegoTechnique.DWT, new ArrayList<Double>());
-        dataMap.put(StegoTechnique.DFT, new ArrayList<Double>());
+        dataMap.put(StegoTechnique.LSB, 7.0);
+        dataMap.put(StegoTechnique.GREENBLUE, 2.5);
+        dataMap.put(StegoTechnique.DWT, 0.7);
+        dataMap.put(StegoTechnique.DFT, 6.0);
         Graph.displayStoragePlot(dataMap);
 
         // This dummy chart is used so the previous chart is rendered while

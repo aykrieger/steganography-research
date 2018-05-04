@@ -107,6 +107,7 @@ public class Graph {
                 true,
                 false
         );
+
         return chart;
     }
 

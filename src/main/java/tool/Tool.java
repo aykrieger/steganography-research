@@ -198,10 +198,6 @@ public class Tool  {
         return correctCount / (maxLen * 8.0);
     }
 
-    private static void graphResults(HashMap<StegoTechnique, ArrayList<Double>> resultMap) {
-
-    }
-
     /*
     You must have the following folders and  in the project's root directory before running
     this method:
@@ -218,25 +214,25 @@ public class Tool  {
         final File folderStego = new File("StenographicOutputImages");
         final File folderComparator = new File("WardenImages");
 
-//        //clears the files in the outputting files
-//        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
-//            fileStego.delete();
-//        }
-//        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
-//            fileWarden.delete();
-//        }
+        //clears the files in the outputting files
+        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
+            fileStego.delete();
+        }
+        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
+            fileWarden.delete();
+        }
 
-//        sendAllImagesToBeStego(folderPlain);
-//        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
+        sendAllImagesToBeStego(folderPlain);
+        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
 
 
-        HashMap<StegoTechnique, ArrayList<Double>> resultMap =
+        HashMap<StegoTechnique, ArrayList<Double>> dataMap =
                 compareMessages(folderComparator, comparatorWriter);
 
         rawQuickPairWriter.close();
         comparatorWriter.close();
 
-
+        Graph.saveCorrectnessPlot(dataMap, "FinalGraphs/correctness_plot.png");
     }
 
 
