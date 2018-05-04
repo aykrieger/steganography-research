@@ -190,15 +190,15 @@ public class Tool  {
         final File folderComparator = new File("WardenImages");
 
         //clears the files in the outputting files
-//        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
-//            fileStego.delete();
-//        }
-//        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
-//            fileWarden.delete();
-//        }
-//
-//        sendAllImagesToBeStego(folderPlain);
-//        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
+        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
+            fileStego.delete();
+        }
+        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
+            fileWarden.delete();
+        }
+
+        sendAllImagesToBeStego(folderPlain);
+        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
 
 
         compareMessages(folderComparator, comparatorWriter);

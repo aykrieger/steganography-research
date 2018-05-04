@@ -98,18 +98,15 @@ public class DWTEncoder implements Encoder {
     }
 
     private int[][] forwardHaar(BufferedImage C, Integer mask, int shiftAmt) {
-        int[][] pixelData = new int[C.getHeight()][C.getWidth()];
+        int imageHeight = C.getHeight();
+        int imageWidth = C.getWidth();
+
+        int[][] pixelData = new int[imageWidth][imageHeight];
 
         //get the pixel data to transform with the color component from the mask
-        for (int row = 0; row < C.getHeight(); row++) {
-            for (int col = 0; col < C.getWidth(); col++) {
-                try {
-                    pixelData[col][row] = (C.getRGB(col, row) & mask) >> shiftAmt;
-                } catch ( ArrayIndexOutOfBoundsException e ) {
-                    int cat = 5;
-                }
-
-
+        for (int row = 0; row < imageWidth; row++) {
+            for (int col = 0; col < imageHeight; col++) {
+                pixelData[row][col] = (C.getRGB(row, col) & mask) >> shiftAmt;
             }
         }
 
