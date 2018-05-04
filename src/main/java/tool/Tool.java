@@ -12,6 +12,8 @@ import warden.RawQuickPair.RawQuickPair;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Tool  {
@@ -118,10 +120,20 @@ public class Tool  {
         }
     }
 
-    private static void compareMessages(final File folder, BufferedWriter comparatorWriter) throws IOException {
+    private static HashMap<StegoTechnique, ArrayList<Double>> compareMessages(
+            final File folder, BufferedWriter comparatorWriter) throws IOException {
+
+        HashMap<StegoTechnique, ArrayList<Double>> resultMap = new HashMap<>();
+        resultMap.put(StegoTechnique.LSB, new ArrayList<Double>());
+        resultMap.put(StegoTechnique.GREENBLUE, new ArrayList<Double>());
+        resultMap.put(StegoTechnique.DFT, new ArrayList<Double>());
+        resultMap.put(StegoTechnique.DWT, new ArrayList<Double>());
+
         String largeMessage = readLargeMessage();
         BufferedWriter ratioWriter = new BufferedWriter(new FileWriter("src/main/java/tool/ratioSucessfullyTransmittedMessage.txt", true));
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
+
+            StegoTechnique currentTechnique = StegoTechnique.LSB;
 
             //gets the name of the files
             String imageName = (imagePointer.getName());
@@ -136,16 +148,20 @@ public class Tool  {
                 int imageSize = image.getHeight() * image.getWidth() / 16;
                 String incomingMessage = null;
                 if (imageName.contains("LSB_")) {
+                    currentTechnique = StegoTechnique.LSB;
                     LeastSignificantBitEncoder leastSignificantBitEncoder = new LeastSignificantBitEncoder(inputFileName);
                     incomingMessage = leastSignificantBitEncoder.Decode();
                 } else if (imageName.contains("GreenBlue_")) {
+                    currentTechnique = StegoTechnique.GREENBLUE;
                     imageSize = imageSize * 2 / 3;
                     incomingMessage = GreenBlueEncoder.decode(inputFileName, 12345);
                 } else if (imageName.contains("DFT_")) {
+                    currentTechnique = StegoTechnique.DFT;
                     imageSize = imageSize / 4;
                     DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
                     incomingMessage = dftEncoder.Decode();
                 } else if (imageName.contains("DWT_")) {
+                    currentTechnique = StegoTechnique.DWT;
                     imageSize = imageSize / 4;
                     DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
                     incomingMessage = dwtEncoder.Decode();
@@ -154,10 +170,15 @@ public class Tool  {
                     double ratio = stringComparator(incomingMessage, largeMessage.substring(0, imageSize));
                     comparatorWriter.write("\n" + imageName + " : " + ratio +"\n");
                     comparatorWriter.write(incomingMessage + "\n\n");
+
+                    ArrayList<Double> stegoData = resultMap.get(currentTechnique);
+                    stegoData.add(ratio);
                 }
             }
         }
         ratioWriter.close();
+
+        return resultMap;
     }
 
     private static double stringComparator(String actualMessage, String expectedMessage) throws UnsupportedEncodingException {
@@ -178,8 +199,12 @@ public class Tool  {
     }
 
     /*
-    You must have the folders "StenographicOutputImages" and "WardenImages" in the project's root
-    directory before running this method.
+    You must have the following folders and  in the project's root directory before running
+    this method:
+
+    "StenographicOutputImages"
+    "WardenImages"
+    "FinalGraphs"
      */
     public static void main(String[] args) throws IOException {
         BufferedWriter rawQuickPairWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt"));
@@ -189,21 +214,25 @@ public class Tool  {
         final File folderStego = new File("StenographicOutputImages");
         final File folderComparator = new File("WardenImages");
 
-        //clears the files in the outputting files
-        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
-            fileStego.delete();
-        }
-        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
-            fileWarden.delete();
-        }
+//        //clears the files in the outputting files
+//        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
+//            fileStego.delete();
+//        }
+//        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
+//            fileWarden.delete();
+//        }
 
-        sendAllImagesToBeStego(folderPlain);
-        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
+//        sendAllImagesToBeStego(folderPlain);
+//        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
 
 
-        compareMessages(folderComparator, comparatorWriter);
+        HashMap<StegoTechnique, ArrayList<Double>> resultMap =
+                compareMessages(folderComparator, comparatorWriter);
+
         rawQuickPairWriter.close();
         comparatorWriter.close();
+
+        
     }
 
 

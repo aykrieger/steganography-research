@@ -4,11 +4,16 @@
 
 # Java
 out/
-StenographicOutputImages/
-WardenImages/
+
+
 build/
 target/
 config/
 *.jar
 
+# Stego Project
+StenographicOutputImages/
+WardenImages/
+FinalGraphs/
+src/main/java/tool/ratioSucessfullyTransmittedMessage.txt
 *Thumbs.db

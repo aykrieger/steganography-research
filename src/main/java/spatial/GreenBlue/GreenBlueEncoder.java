@@ -31,7 +31,7 @@ public class GreenBlueEncoder {
      *
      * @param inputImgPath   Input image path, formatted as png or jpg
      * @param outputImgPath  Output image path, formatted as png
-     * @param origMessage    Custom message, accepts any valid Strings
+     * @param origMessage    Custom message, accepts any nonempty String
      * @param secretKey      Secret key that is shared between the encoder and decoder
      * @throws IOException
      */

@@ -16,8 +16,16 @@ public class DiscreteSpringTransform {
      */
     private BufferedImage image;
 
+    // ## Temporary fix so output image is the same size as input image
+    private int ORIGINAL_WIDTH;
+    private int ORIGINAL_HEIGHT;
+
     public DiscreteSpringTransform(String imageFileName) throws IOException {
         this.image = ImageIO.read(new File(imageFileName));
+
+        // ## Temporary fix so output image is the same size as input image
+        this.ORIGINAL_WIDTH = this.image.getWidth();
+        this.ORIGINAL_HEIGHT = this.image.getHeight();
     }
 
     private BufferedImage breakImageUp() throws IOException {
@@ -59,6 +67,17 @@ public class DiscreteSpringTransform {
 
     public void writeImage(String outputFilePath) throws IOException{
         BufferedImage changedImage = breakImageUp();
+
+        // ## Temporary fix so output image is the same size as input image
+        Image tempImage = changedImage.getScaledInstance(ORIGINAL_WIDTH, ORIGINAL_HEIGHT,
+                Image.SCALE_DEFAULT);
+        BufferedImage tempBuff = new BufferedImage(ORIGINAL_WIDTH, ORIGINAL_HEIGHT,
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = tempBuff.createGraphics();
+        graphics.drawImage(tempImage, 0, 0, null);
+        graphics.dispose();
+        changedImage = tempBuff;
+
         File outputImageFile = new File(outputFilePath);
         ImageIO.write(changedImage, "png", outputImageFile);
     }
