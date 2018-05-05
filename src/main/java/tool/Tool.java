@@ -199,12 +199,10 @@ public class Tool {
     }
 
     /*
-    You must have the following folders and  in the project's root directory before running
-    this method:
-
+    You must have the following folders in the project's root directory before running this method:
     "StenographicOutputImages"
     "WardenImages"
-    "FinalGraphs"
+    "FinalGraphs" (This means you, Rob)
      */
     public static void main(String[] args) throws IOException {
         BufferedWriter rawQuickPairWriter = new BufferedWriter(new FileWriter("src/test/java/warden/ratioRQP.txt"));
