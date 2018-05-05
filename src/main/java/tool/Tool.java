@@ -16,15 +16,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class Tool  {
+public class Tool {
 
     //this reads the large text file in messages and converts it into a usable string
-    public static String readLargeMessage () throws IOException {
+    private static String readLargeMessage() throws IOException {
         File file = new File("Messages/largeTextFile.txt");
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         StringBuilder stringBuilder = new StringBuilder();
         String line;
-        while ((line = bufferedReader.readLine()) != null){
+        while ((line = bufferedReader.readLine()) != null) {
             stringBuilder.append(line);
         }
         return stringBuilder.toString();
@@ -67,16 +67,16 @@ public class Tool  {
                 int gbMessageSize = imageSize * 2 / 3;
                 GreenBlueEncoder.encode(inputFileName, outputFileNameGreenBlue, largeMessage.substring(0, gbMessageSize), 12345);
 
-                int frequenceyMessageSize = imageSize/4;
+                int frequenceyMessageSize = imageSize / 4;
                 //encodes the image as a dwt
 
                 DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
-                dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+                dftEncoder.Encode(largeMessage.substring(0, frequenceyMessageSize));
                 dftEncoder.WriteImage(outputFileNameDFT);
 
                 //encodes the image as a dwt
                 DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
-                dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
+                dwtEncoder.Encode(largeMessage.substring(0, frequenceyMessageSize));
                 dwtEncoder.WriteImage(outputFileNameDWT);
 
                 System.out.println("Finished encoding " + count + "/50 images");
@@ -107,7 +107,7 @@ public class Tool  {
                 //RawQuickPairWarden passes only non stego images
                 RawQuickPair rawQuickPair = new RawQuickPair(inputFileName);
                 rawQuickPair.writeImage(outputFileNameRawQuickPair);
-                rawQuickPairWriter.write(imageName+ ": \t"+ rawQuickPair.findRatio()+ "\n");
+                rawQuickPairWriter.write(imageName + ": \t" + rawQuickPair.findRatio() + "\n");
 
                 DiscreteSpringTransform discreteSpringTransform = new DiscreteSpringTransform(inputFileName);
                 discreteSpringTransform.writeImage(outputFileNameDST);
@@ -168,7 +168,7 @@ public class Tool  {
                 }
                 if (incomingMessage != null) {
                     double ratio = stringComparator(incomingMessage, largeMessage.substring(0, imageSize));
-                    comparatorWriter.write("\n" + imageName + " : " + ratio +"\n");
+                    comparatorWriter.write("\n" + imageName + " : " + ratio + "\n");
                     comparatorWriter.write(incomingMessage + "\n\n");
 
                     ArrayList<Double> stegoData = resultMap.get(currentTechnique);
@@ -189,8 +189,8 @@ public class Tool  {
         int maxLen = actualMessage.length() > expectedMessage.length() ? actualMessage.length() : expectedMessage.length();
 
         int correctCount = 0;
-        while(shorterIter.hasNext()) {
-            if(outputIter.next() == actualIter.next()) {
+        while (shorterIter.hasNext()) {
+            if (outputIter.next().equals(actualIter.next())) {
                 correctCount++;
             }
         }
@@ -218,7 +218,7 @@ public class Tool  {
         for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
             fileStego.delete();
         }
-        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
+        for (final File fileWarden : Objects.requireNonNull(folderComparator.listFiles())) {
             fileWarden.delete();
         }
 
