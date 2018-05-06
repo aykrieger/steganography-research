@@ -120,6 +120,25 @@ public class Tool {
         }
     }
 
+    private static void rawQuickPairOnNonStegoImages(final File folder, BufferedWriter rawQuickPairWriter) throws IOException {
+        int count = 1;
+
+        for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
+            //gets the name of the files
+            String imageName = (imagePointer.getName());
+            if (!imageName.equals("Thumbs.db")) {
+                //gets the input file path
+                String inputFileName = "ToolImages/" + imageName;
+
+                RawQuickPair rawQuickPair = new RawQuickPair(inputFileName);
+                rawQuickPairWriter.write(imageName + ": \t" + rawQuickPair.findRatio() + "\n");
+
+                System.out.println("raw quick pair completed " + (count) + "/50 images");
+                count++;
+            }
+        }
+    }
+
     private static HashMap<StegoTechnique, ArrayList<Double>> compareMessages(
             final File folder, BufferedWriter comparatorWriter) throws IOException {
 
@@ -221,6 +240,9 @@ public class Tool {
         }
 
         sendAllImagesToBeStego(folderPlain);
+        rawQuickPairWriter.write("\nNonStegoImages:\n");
+        rawQuickPairOnNonStegoImages(folderPlain, rawQuickPairWriter);
+        rawQuickPairWriter.write("\nStegoImages:\n");
         sendAllImagesToWardens(folderStego, rawQuickPairWriter);
 
 
