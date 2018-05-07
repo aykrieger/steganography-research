@@ -89,7 +89,10 @@ public class Tool {
 
     private static void sendAllImagesToWardens(final File folder, BufferedWriter rawQuickPairWriter) throws IOException {
         int count = 1;
-
+        double sumLSBRQP = 0;
+        double sumGBRQP = 0;
+        double sumDFTRQP = 0;
+        double sumDWTRQP = 0;
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
             //gets the name of the files
             String imageName = (imagePointer.getName());
@@ -109,8 +112,17 @@ public class Tool {
                 //RawQuickPairWarden passes only non stego images
                 RawQuickPair rawQuickPair = new RawQuickPair(inputFileName);
                 rawQuickPair.writeImage(outputFileNameRawQuickPair);
-                rawQuickPairWriter.write(imageName + ": \t" + rawQuickPair.findRatio() + "\n");
-
+                double ratio = rawQuickPair.findRatio();
+                rawQuickPairWriter.write(imageName + ": \t" + ratio + "\n");
+                if (imageName.contains("LSB_")) {
+                    sumLSBRQP+=ratio;
+                } else if (imageName.contains("GreenBlue_")) {
+                    sumGBRQP+=ratio;
+                } else if (imageName.contains("DFT_")) {
+                    sumDFTRQP+=ratio;
+                } else if (imageName.contains("DWT_")) {
+                    sumDWTRQP+=ratio;
+                }
                 DiscreteSpringTransform discreteSpringTransform = new DiscreteSpringTransform(inputFileName);
                 discreteSpringTransform.writeImage(outputFileNameDST);
 
@@ -120,11 +132,18 @@ public class Tool {
                 count++;
             }
         }
+        System.out.println("Close Color Ratio Mean For LSB:\t " +sumLSBRQP/50);
+        System.out.println("Close Color Ratio Mean For Green Blue:\t " +sumGBRQP/50);
+        System.out.println("Close Color Ratio Mean For DFT:\t " +sumDFTRQP/50);
+        System.out.println("Close Color Ratio Mean For DWT:\t " +sumDWTRQP/50);
+        System.out.println("Close Color Ratio Mean For All Techniques:\t " + (sumLSBRQP+sumGBRQP+sumDFTRQP+sumDWTRQP)/200);
+
     }
 
     private static void rawQuickPairOnNonStegoImages(final File folder, BufferedWriter rawQuickPairWriter) throws IOException {
         int count = 1;
         double ratioArray [] = new double[50];
+        double sum = 0.0;
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
             //gets the name of the files
             String imageName = (imagePointer.getName());
@@ -136,14 +155,15 @@ public class Tool {
                 rawQuickPair.isImageStegonagraphic();
                 double ratio = rawQuickPair.findRatio();
                 rawQuickPairWriter.write(imageName + ": \t" + rawQuickPair.findRatio() + "\n");
-
+                sum+=ratio;
                 System.out.println("raw quick pair completed " + (count) + "/50 images");
                 ratioArray[count-1]=rawQuickPair.findRatio();
                 count++;
             }
         }
         Arrays.sort(ratioArray);
-    System.out.println(ratioArray[40]);
+    System.out.println("Raw Quick Pair Ratio at 80%:\t"+ratioArray[40]);
+    System.out.println("Close Color Ratio Mean For Cover Images:\t " +sum/50);
     }
 
     private static HashMap<StegoTechnique, ArrayList<Double>> compareMessages(
