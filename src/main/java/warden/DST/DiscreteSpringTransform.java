@@ -16,68 +16,54 @@ public class DiscreteSpringTransform {
      */
     private BufferedImage image;
 
-    // ## Temporary fix so output image is the same size as input image
-    private int ORIGINAL_WIDTH;
-    private int ORIGINAL_HEIGHT;
-
     public DiscreteSpringTransform(String imageFileName) throws IOException {
         this.image = ImageIO.read(new File(imageFileName));
-
-        // ## Temporary fix so output image is the same size as input image
-        this.ORIGINAL_WIDTH = this.image.getWidth();
-        this.ORIGINAL_HEIGHT = this.image.getHeight();
     }
 
+    //break image up takes an image and splits it into an image at 60 precent and 40 precent of the original width
+    //and than changes them into images with half the width of original image and combines them
     private BufferedImage breakImageUp() throws IOException {
-         int border = (int) (this.image.getWidth() * 0.6);
-         BufferedImage larger = this.image.getSubimage(0,0, border, this.image.getHeight());
-         BufferedImage smaller = this.image.getSubimage(border+1,0, (this.image.getWidth() - border-1), this.image.getHeight());
-         if (border > 100){
-           breakImageUp(larger, smaller );
+        int width = image.getWidth();
+        int border = (int) (width * 0.6);
+        BufferedImage larger = this.image.getSubimage(0,0, border, this.image.getHeight());
+        BufferedImage smaller = this.image.getSubimage(border+1,0, (this.image.getWidth() - border-1), this.image.getHeight());
+        if (border > 100){
+            breakImageUp(larger, smaller );
         }
-        BufferedImage returnImage = new BufferedImage(2*((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)), smaller.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage returnImage = new BufferedImage(width, smaller.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics graphics = returnImage.getGraphics();
-        graphics.drawImage(larger,0,0,((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)),smaller.getHeight(),null);
-        graphics.drawImage(smaller,((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)),0,((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)),smaller.getHeight(),null);
+        graphics.drawImage(larger,0,0,width/2,smaller.getHeight(),null);
+        graphics.drawImage(smaller,width/2,0,width-(width/2),smaller.getHeight(),null);
         graphics.dispose();
         return returnImage;
     }
 
+    //recursive call for breakImageUp
     private BufferedImage breakImageUp(BufferedImage larger, BufferedImage smaller) throws IOException {
 
         int largerBorder = (int) (larger.getWidth() * 0.6);
         int smallerBorder = (int) (smaller.getWidth() * 0.6);
 
         BufferedImage largerOfLarger = larger.getSubimage(0,0, largerBorder, larger.getHeight());
-        BufferedImage smallerOfLarger = larger.getSubimage(largerBorder+1,0, (larger.getWidth() - largerBorder-1), larger.getHeight());
+        BufferedImage smallerOfLarger = larger.getSubimage(largerBorder,0, (larger.getWidth() - largerBorder), larger.getHeight());
         BufferedImage largerOfSmaller = smaller.getSubimage(0,0, smallerBorder, smaller.getHeight());
-        BufferedImage smallerOfSmaller = smaller.getSubimage(smallerBorder+1,0, (smaller.getWidth() - smallerBorder-1), smaller.getHeight());
+        BufferedImage smallerOfSmaller = smaller.getSubimage(smallerBorder,0, (smaller.getWidth() - smallerBorder), smaller.getHeight());
 
         if (smallerBorder > 100){
             larger = breakImageUp(largerOfLarger, smallerOfLarger);
             smaller = breakImageUp(largerOfSmaller,smallerOfSmaller );
         }
-        BufferedImage returnImage = new BufferedImage(2*((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)), smaller.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage returnImage = new BufferedImage(larger.getWidth()+smaller.getWidth(), smaller.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics graphics = returnImage.getGraphics();
-        graphics.drawImage(larger,0,0,((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)),smaller.getHeight(),null);
-        graphics.drawImage(smaller,((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)),0,((int) ((larger.getWidth()+smaller.getWidth()) * 0.5)),smaller.getHeight(),null);
+        int halfway = (int) ((larger.getWidth()+smaller.getWidth()) * 0.5);
+        graphics.drawImage(larger,0,0,halfway,smaller.getHeight(),null);
+        graphics.drawImage(smaller,halfway,0,larger.getWidth()+smaller.getWidth()-halfway,smaller.getHeight(),null);
         graphics.dispose();
         return returnImage;
     }
 
     public void writeImage(String outputFilePath) throws IOException{
         BufferedImage changedImage = breakImageUp();
-
-        // ## Temporary fix so output image is the same size as input image
-        Image tempImage = changedImage.getScaledInstance(ORIGINAL_WIDTH, ORIGINAL_HEIGHT,
-                Image.SCALE_DEFAULT);
-        BufferedImage tempBuff = new BufferedImage(ORIGINAL_WIDTH, ORIGINAL_HEIGHT,
-                BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = tempBuff.createGraphics();
-        graphics.drawImage(tempImage, 0, 0, null);
-        graphics.dispose();
-        changedImage = tempBuff;
-
         File outputImageFile = new File(outputFilePath);
         ImageIO.write(changedImage, "png", outputImageFile);
     }
