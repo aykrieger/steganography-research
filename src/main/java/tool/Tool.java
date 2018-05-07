@@ -12,7 +12,9 @@ import warden.RawQuickPair.RawQuickPair;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -122,7 +124,7 @@ public class Tool {
 
     private static void rawQuickPairOnNonStegoImages(final File folder, BufferedWriter rawQuickPairWriter) throws IOException {
         int count = 1;
-
+        double ratioArray [] = new double[50];
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
             //gets the name of the files
             String imageName = (imagePointer.getName());
@@ -131,12 +133,17 @@ public class Tool {
                 String inputFileName = "ToolImages/" + imageName;
 
                 RawQuickPair rawQuickPair = new RawQuickPair(inputFileName);
+                rawQuickPair.isImageStegonagraphic();
+                double ratio = rawQuickPair.findRatio();
                 rawQuickPairWriter.write(imageName + ": \t" + rawQuickPair.findRatio() + "\n");
 
                 System.out.println("raw quick pair completed " + (count) + "/50 images");
+                ratioArray[count-1]=rawQuickPair.findRatio();
                 count++;
             }
         }
+        Arrays.sort(ratioArray);
+    System.out.println(ratioArray[40]);
     }
 
     private static HashMap<StegoTechnique, ArrayList<Double>> compareMessages(

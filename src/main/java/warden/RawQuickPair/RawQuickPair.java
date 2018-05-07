@@ -15,7 +15,7 @@ public class RawQuickPair {
 
     public RawQuickPair(String imageFileName) {
         this.imageFileName = imageFileName;
-        this.ratio = .3;
+        this.ratio = .63;
     }
 
     public RawQuickPair(String imageFileName, double ratio) {
