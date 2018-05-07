@@ -31,8 +31,17 @@ public class Tool  {
     }
 
     //this method takes all images in the input folder and creates a Stenographic version of the image
-    private static void sendAllImagesToBeStego(final File folder) throws IOException {
+    private static HashMap<StegoTechnique, ArrayList<Long>> sendAllImagesToBeStego(
+            final File folder) throws IOException {
+
         String largeMessage = readLargeMessage();
+
+        ArrayList<Long> timeListLSB = new ArrayList<Long>();
+        ArrayList<Long> timeListGreenBlue = new ArrayList<Long>();
+        ArrayList<Long> timeListDFT = new ArrayList<Long>();
+        ArrayList<Long> timeListDWT = new ArrayList<Long>();
+
+        Timer timer = new Timer();
 
         int count = 1;
         for (final File imagePointer : Objects.requireNonNull(folder.listFiles())) {
@@ -59,30 +68,50 @@ public class Tool  {
                 int imageSize = image.getHeight() * image.getWidth() / 16;
 
                 //this encodes the image as LSB
+                timer.start();
                 LeastSignificantBitEncoder leastSignificantBitEncoder = new LeastSignificantBitEncoder(inputFileName);
                 leastSignificantBitEncoder.Encode(largeMessage.substring(0, imageSize));
                 leastSignificantBitEncoder.WriteImage(outputFileNameLSB);
+                timer.end();
+                timeListLSB.add(timer.getTotalTime());
 
                 //encodes image as GB secret key is 12345 since it is easy to remember
+                timer.start();
                 int gbMessageSize = imageSize * 2 / 3;
                 GreenBlueEncoder.encode(inputFileName, outputFileNameGreenBlue, largeMessage.substring(0, gbMessageSize), 12345);
+                timer.end();
+                timeListGreenBlue.add(timer.getTotalTime());
 
                 int frequenceyMessageSize = imageSize/4;
                 //encodes the image as a dwt
-
+                timer.start();
                 DFTEncoder dftEncoder = new DFTEncoder(inputFileName);
                 dftEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
                 dftEncoder.WriteImage(outputFileNameDFT);
+                timer.end();
+                timeListDFT.add(timer.getTotalTime());
 
                 //encodes the image as a dwt
+                timer.start();
                 DWTEncoder dwtEncoder = new DWTEncoder(inputFileName);
                 dwtEncoder.Encode(largeMessage.substring(0,frequenceyMessageSize));
                 dwtEncoder.WriteImage(outputFileNameDWT);
+                timer.end();
+                timeListDWT.add(timer.getTotalTime());
 
                 System.out.println("Finished encoding " + count + "/50 images");
                 count++;
             }
         }
+
+        HashMap<StegoTechnique, ArrayList<Long>> resultMap = new HashMap<>();
+
+        resultMap.put(StegoTechnique.LSB, timeListLSB);
+        resultMap.put(StegoTechnique.GREENBLUE, timeListGreenBlue);
+        resultMap.put(StegoTechnique.DFT, timeListDFT);
+        resultMap.put(StegoTechnique.DWT, timeListDWT);
+
+        return resultMap;
     }
 
     private static void sendAllImagesToWardens(final File folder, BufferedWriter rawQuickPairWriter) throws IOException {
@@ -214,25 +243,26 @@ public class Tool  {
         final File folderStego = new File("StenographicOutputImages");
         final File folderComparator = new File("WardenImages");
 
-        //clears the files in the outputting files
-        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
-            fileStego.delete();
-        }
-        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
-            fileWarden.delete();
-        }
+//        //clears the files in the outputting files
+//        for (final File fileStego : Objects.requireNonNull(folderStego.listFiles())) {
+//            fileStego.delete();
+//        }
+//        for (final File fileWarden: Objects.requireNonNull(folderComparator.listFiles())){
+//            fileWarden.delete();
+//        }
 
-        sendAllImagesToBeStego(folderPlain);
-        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
+        HashMap<StegoTechnique, ArrayList<Long>> timeMap = sendAllImagesToBeStego(folderPlain);
+//        sendAllImagesToWardens(folderStego, rawQuickPairWriter);
 
 
-        HashMap<StegoTechnique, ArrayList<Double>> dataMap =
+        HashMap<StegoTechnique, ArrayList<Double>> detectionMap =
                 compareMessages(folderComparator, comparatorWriter);
 
         rawQuickPairWriter.close();
         comparatorWriter.close();
 
-        Graph.saveCorrectnessPlot(dataMap, "FinalGraphs/correctness_plot.png");
+        Graph.saveTimePlot(timeMap, "FinalGraphs/time_plot.png");
+        Graph.saveCorrectnessPlot(detectionMap, "FinalGraphs/correctness_plot.png");
     }
 
 
