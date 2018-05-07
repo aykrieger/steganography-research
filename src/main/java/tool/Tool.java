@@ -295,14 +295,13 @@ public class Tool {
             fileWarden.delete();
         }
 
-<<<<<<< HEAD
         sendAllImagesToBeStego(folderPlain);
         rawQuickPairWriter.write("\nNonStegoImages:\n");
         rawQuickPairOnNonStegoImages(folderPlain, rawQuickPairWriter);
         rawQuickPairWriter.write("\nStegoImages:\n");
-=======
+
         HashMap<StegoTechnique, ArrayList<Long>> timeMap = sendAllImagesToBeStego(folderPlain);
->>>>>>> master
+
         sendAllImagesToWardens(folderStego, rawQuickPairWriter);
 
 
